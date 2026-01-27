@@ -1,0 +1,187 @@
+<section class="relative w-full h-screen bg-black text-white glow-services">
+
+<!-- Color Lines -->
+<div class="absolute top-0 left-0 w-full h-[2px] 
+            bg-pink z-50 pointer-events-none"></div>
+
+<div class="absolute top-0 left-0 w-full h-6 
+            bg-gradient-to-b from-pink/40 to-transparent 
+            pointer-events-none z-40"></div>
+
+<!-- Horizontális scroll container -->
+<div 
+  #scrollContainer
+  scroll-container
+  class="relative z-40 flex h-full overflow-x-auto select-none cursor-grab active:cursor-grabbing"
+  style="scrollbar-width: none; -ms-overflow-style: none;"  
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerleave)="onPointerLeave()"
+  (mouseover)="onMouseEnter()"
+  (mouseout)="onMouseLeave()"
+>
+
+<!-- EREDETI LISTA -->
+<div 
+  *ngFor="let item of services"
+  class="
+    relative 
+    min-w-[100vw] md:min-w-[50vw]
+    h-[100vh] md:h-full
+    flex-shrink-0 
+    overflow-hidden 
+    group 
+    mr-[2vw] 
+    z-10
+  "
+  (pointerup)="onCardPointerUp($event, item)"
+>
+
+  <!-- IMAGE WRAPPER -->
+  <div class="w-full h-full overflow-hidden relative z-0">
+    <img 
+      [src]="item.image"
+      [alt]="item.title"
+      draggable="false"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+  </div>
+
+  <!-- OVERLAYS -->
+  <div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/20 via-black/0 to-black/50 z-0"></div>
+  <div class="absolute inset-0 pointer-events-none bg-gradient-to-tr from-fuchsia-500/10 to-cyan-500/10 mix-blend-overlay z-0"></div>
+
+  <!-- TITLE CARD -->
+  <div 
+    class="
+      absolute top-1/2 left-1/2 
+      -translate-x-1/2 -translate-y-1/2
+      w-[80%] md:w-[70%]
+      bg-black/60 backdrop-blur-md 
+      py-3 px-4 md:py-6 md:px-8
+      rounded-lg 
+      text-center 
+      z-20
+    "
+  >
+    <h2 class="text-2xl md:text-3xl font-semibold tracking-wide">
+      {{ item.title }}
+    </h2>
+  </div>
+</div>
+
+<!-- MÁSOLAT A VÉGTELENÍTÉSHEZ -->
+<div 
+  *ngFor="let item of services"
+  class="
+    relative 
+    min-w-[100vw] md:min-w-[50vw]
+    h-[100vh] md:h-full
+    flex-shrink-0 
+    overflow-hidden 
+    group 
+    mr-[2vw] 
+    z-10
+  "
+  (pointerup)="onCardPointerUp($event, item)"
+>
+
+  <!-- IMAGE WRAPPER -->
+  <div class="w-full h-full overflow-hidden relative z-0">
+    <img 
+      [src]="item.image"
+      [alt]="item.title"
+      draggable="false"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+  </div>
+
+  <!-- OVERLAYS -->
+  <div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/20 via-black/0 to-black/50 z-0"></div>
+  <div class="absolute inset-0 pointer-events-none bg-gradient-to-tr from-fuchsia-500/10 to-cyan-500/10 mix-blend-overlay z-0"></div>
+
+  <!-- TITLE CARD -->
+  <div 
+    class="
+      absolute top-1/2 left-1/2 
+      -translate-x-1/2 -translate-y-1/2
+      w-[80%] md:w-[70%]
+      bg-black/60 backdrop-blur-md 
+      py-3 px-4 md:py-6 md:px-8
+      rounded-lg 
+      text-center 
+      z-20
+    "
+  >
+    <h2 class="text-2xl md:text-3xl font-semibold tracking-wide">
+      {{ item.title }}
+    </h2>
+  </div>
+</div>
+</div>
+
+<!-- Modal Window -->
+<div 
+  *ngIf="selectedItem"
+  class="fixed inset-0 z-[9999] flex items-center justify-center"
+>
+  <!-- Sötétített háttér + blur -->
+  <div 
+    class="absolute inset-0 bg-black/70 backdrop-blur-md transition-opacity duration-300"
+    (click)="closeModal()"
+  ></div>
+
+  <!-- MODAL CONTENT -->
+<div class="relative z-10 w-[95%] max-w-5xl bg-black/60 backdrop-blur-lg overflow-hidden shadow-2xl animate-modalIn">
+
+    <!-- HERO IMAGE -->
+<div class="relative w-full max-h-[70vh] flex items-center justify-center bg-black">
+<img 
+  [src]="selectedItem.image"
+  class="max-h-[60vh] md:max-h-[70vh] w-auto object-contain"
+  draggable="false"
+/>
+
+  <!-- Felső gradient a szöveghez -->
+  <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none"></div>
+
+  <!-- Cím -->
+  <h2 class="absolute bottom-6 left-6 text-4xl md:text-5xl font-semibold">
+    {{ selectedItem.title }}
+  </h2>
+</div>
+
+
+    <!-- LEÍRÁS -->
+    <div class="p-6 text-lg leading-relaxed">
+      {{ selectedItem.description }}
+    </div>
+
+    <!-- CLOSE BUTTON -->
+<button 
+  class="
+    absolute top-1 right-2
+    w-8 h-8
+    flex items-center justify-center
+    text-pink
+    text-4xl
+    leading-none
+    font-light
+    transition-all duration-200
+    hover:drop-shadow-[0_0_12px_rgba(255,0,128,0.9)]
+    active:scale-90
+    z-50
+  "
+  (click)="closeModal()"
+>
+  ×
+</button>
+
+
+
+
+  </div>
+</div>
+
+
+</section>

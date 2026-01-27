@@ -18,7 +18,8 @@ module.exports = {
         '-1/2': '-50%',
       },
       colors: {
-        banana: '#b6d67b'
+        arcticWhite: '#E9EAE7 ',
+        pink: '#FF10F0'
       }
     },
   },

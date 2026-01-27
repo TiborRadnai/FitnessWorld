@@ -1,0 +1,120 @@
+<nav class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+     [class.bg-black/60]="isScrolled && !isMenuOpen"
+     [class.backdrop-blur-md]="isScrolled && !isMenuOpen"
+     [class.py-2]="isScrolled && !isMenuOpen"
+     [class.py-4]="!isScrolled && !isMenuOpen">
+
+  <div class="w-full px-6 flex items-center" *ngIf="!isMenuOpen">
+
+    <!-- LOGO -->
+    <div class="text-2xl font-bold tracking-wide">
+      <!-- LOGO -->
+    </div>
+
+    <!-- Desktop menü -->
+    <ul class="hidden md:flex gap-8 text-lg font-medium ml-auto">
+      <li><a href="#" class="text-arcticWhite hover:text-pink transition">Home</a></li>
+      <li class="relative group">
+        <a href="#" class="text-arcticWhite hover:text-pink transition whitespace-nowrap">
+            Services
+        </a>
+        <!-- Submenü -->
+        <div
+            class="absolute left-1/2 -translate-x-1/2 top-full pt-5
+                bg-white/10 backdrop-blur-md 
+                rounded-md 
+                flex flex-col items-center gap-1
+                opacity-0 pointer-events-none
+                group-hover:opacity-100 group-hover:pointer-events-auto
+                transition-all duration-200 px-6 py-3">
+            <a href="#" class="text-arcticWhite hover:text-pink transition whitespace-nowrap text-center">
+            Strength Training
+            </a>
+            <a href="#" class="text-arcticWhite hover:text-pink transition whitespace-nowrap text-center">
+            Yoga Flow
+            </a>
+            <a href="#" class="text-arcticWhite hover:text-pink transition whitespace-nowrap text-center">
+            Kettlebell Workouts
+            </a>
+            <a href="#" class="text-arcticWhite hover:text-pink transition whitespace-nowrap text-center">
+            HIIT Training
+            </a>
+            <a href="#" class="text-arcticWhite hover:text-pink transition whitespace-nowrap text-center">
+            Functional Training
+            </a>
+            <a href="#" class="text-arcticWhite hover:text-pink transition whitespace-nowrap text-center">
+            Dance Workout Energy
+            </a>
+        </div>
+      </li>
+      <li><a href="#" class="text-arcticWhite hover:text-pink transition">Booking</a></li>
+    </ul>
+
+    <!-- USER + CART ICONS -->
+    <div class="hidden md:flex items-center gap-6 ml-8">
+    <!-- User ikon -->
+    <button class="text-arcticWhite hover:text-pink transition">
+        <svg xmlns="http://www.w3.org/2000/svg" 
+            fill="none" viewBox="0 0 24 24" stroke-width="1.5" 
+            stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" 
+                d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a8.25 8.25 0 1 1 15 0" />
+        </svg>
+    </button>
+    <!-- Kosár ikon -->
+    <button class="text-arcticWhite hover:text-pink transition relative">
+        <svg xmlns="http://www.w3.org/2000/svg" 
+            fill="none" viewBox="0 0 24 24" stroke-width="1.5" 
+            stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" 
+                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9m-9 0L6.106 5.272A1.125 1.125 0 0 0 4.986 4.5H3m4.5 9.75 1.125 6.75m9-6.75 1.125 6.75m-1.125-6.75H7.5m12 0 1.394-8.178A1.125 1.125 0 0 0 19.781 4.5H4.986" />
+        </svg>
+        <!-- Kosár számláló (ha kell majd) -->
+        <span class="absolute -top-2 -right-2 bg-pink text-white text-xs px-1.5 py-0.5 rounded-full">
+        0
+        </span>
+    </button>
+    </div>
+
+    <!-- Hamburger -->
+    <button class="md:hidden ml-auto w-8 h-8 flex flex-col justify-center items-center gap-1.5"
+            (click)="toggleMenu()">
+      <span class="block w-6 h-0.5 bg-white transition-all duration-300"></span>
+      <span class="block w-6 h-0.5 bg-white transition-all duration-300"></span>
+      <span class="block w-6 h-0.5 bg-white transition-all duration-300"></span>
+    </button>
+
+  </div>
+</nav>
+
+
+<!-- ⭐ TELJESEN FENT KEZDŐDŐ MOBILMENÜ (nem a navbar alatt!) -->
+<!-- FÉLREKATTINTÁSRA ZÁRÓ OVERLAY -->
+<div *ngIf="isMenuOpen"
+     class="fixed inset-0 z-40"
+     (click)="toggleMenu()">
+</div>
+
+<!-- MOBILMENÜ (nem záródik be, ha erre kattintasz) -->
+<div *ngIf="isMenuOpen"
+     class="fixed top-0 left-0 w-full z-50 bg-black/70 backdrop-blur-md text-arcticWhite px-6 py-6 animate-slideDown"
+     (click)="$event.stopPropagation()">
+
+  <!-- Bezárás gomb (hamburger helyén marad) -->
+  <div class="w-full flex justify-end">
+    <button class="w-8 h-8 flex flex-col justify-center items-center gap-1.5 mb-6"
+            (click)="toggleMenu()">
+      <span class="block w-6 h-0.5 bg-white rotate-45 translate-y-1"></span>
+      <span class="block w-6 h-0.5 bg-white -rotate-45 -translate-y-1"></span>
+    </button>
+  </div>
+
+  <!-- Menü pontok -->
+  <a href="#" class="block text-xl mb-4">Home</a>
+  <a href="#" class="block text-xl mb-4">Services</a>
+  <a href="#" class="block text-xl mb-4">Booking</a>
+  <a href="#" class="block text-xl mb-4">Contact</a>
+
+</div>
+
+
