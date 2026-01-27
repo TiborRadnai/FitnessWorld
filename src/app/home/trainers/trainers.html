@@ -1,0 +1,122 @@
+<section class="relative w-full h-screen bg-black text-white overflow-hidden glow-trainers">
+<!-- Color Lines -->
+<div class="absolute top-0 left-0 w-full h-[2px] 
+            bg-pink z-50 pointer-events-none"></div>
+
+<div class="absolute top-0 left-0 w-full h-6 
+            bg-gradient-to-b from-pink/40 to-transparent 
+            pointer-events-none z-40"></div>
+
+  <div class="grid grid-cols-4 grid-rows-2 gap-[0.4vw] w-full h-full p-[0.4vw]">
+
+    <!-- x1 -->
+    <div class="relative col-span-1 row-span-1 group overflow-hidden" (click)="openTrainerModal(trainer1)">
+      <img [src]="trainer1.image" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]" />
+<div class="absolute inset-0 bg-black/30 transition-opacity duration-500 group-hover:bg-black/10"></div>
+      <div class="absolute bottom-3 left-3 text-lg font-semibold">
+        {{ trainer1.nickName }}<br>
+        <span class="text-sm opacity-80">{{ trainer1.role }}</span>
+      </div>
+    </div>
+
+    <!-- y (álló, 1 széles, 2 magas) -->
+    <div class="relative col-span-1 row-span-2 group overflow-hidden" (click)="openTrainerModal(trainerY)">
+      <img [src]="trainerY.image" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]" />
+<div class="absolute inset-0 bg-black/30 transition-opacity duration-500 group-hover:bg-black/10"></div>
+      <div class="absolute bottom-3 left-3 text-lg font-semibold">
+        {{ trainerY.nickName }}<br>
+        <span class="text-sm opacity-80">{{ trainerY.role }}</span>
+      </div>
+    </div>
+
+    <!-- z (fekvő, 2 széles, 1 magas) -->
+    <div class="relative col-span-2 row-span-1 group overflow-hidden" (click)="openTrainerModal(trainerZ)">
+      <img [src]="trainerZ.image" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]" />
+<div class="absolute inset-0 bg-black/30 transition-opacity duration-500 group-hover:bg-black/10"></div>
+      <div class="absolute bottom-3 left-3 text-lg font-semibold">
+        {{ trainerZ.nickName }}<br>
+        <span class="text-sm opacity-80">{{ trainerZ.role }}</span>
+      </div>
+    </div>
+
+    <!-- x2 -->
+    <div class="relative col-span-1 row-span-1 group overflow-hidden" (click)="openTrainerModal(trainer2)">
+      <img [src]="trainer2.image" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]" />
+<div class="absolute inset-0 bg-black/30 transition-opacity duration-500 group-hover:bg-black/10"></div>
+      <div class="absolute bottom-3 left-3 text-lg font-semibold">
+        {{ trainer2.nickName }}<br>
+        <span class="text-sm opacity-80">{{ trainer2.role }}</span>
+      </div>
+    </div>
+
+    <!-- x3 -->
+    <div class="relative col-span-1 row-span-1 group overflow-hidden" (click)="openTrainerModal(trainer3)">
+      <img [src]="trainer3.image" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]" />
+<div class="absolute inset-0 bg-black/30 transition-opacity duration-500 group-hover:bg-black/10"></div>
+      <div class="absolute bottom-3 left-3 text-lg font-semibold">
+        {{ trainer3.nickName }}<br>
+        <span class="text-sm opacity-80">{{ trainer3.role }}</span>
+      </div>
+    </div>
+
+    <!-- x4 -->
+    <div class="relative col-span-1 row-span-1 group overflow-hidden" (click)="openTrainerModal(trainer4)">
+      <img [src]="trainer4.image" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.12]" />
+<div class="absolute inset-0 bg-black/30 transition-opacity duration-500 group-hover:bg-black/10"></div>
+      <div class="absolute bottom-3 left-3 text-lg font-semibold">
+        {{ trainer4.nickName }}<br>
+        <span class="text-sm opacity-80">{{ trainer4.role }}</span>
+      </div>
+    </div>
+
+  </div>
+
+<!-- TRAINER MODAL -->
+<div 
+  *ngIf="selectedTrainer"
+  class="fixed inset-0 z-[9999] flex items-center justify-center"
+>
+  <!-- BACKDROP -->
+  <div 
+    class="absolute inset-0 bg-black/70 backdrop-blur-md"
+    (click)="closeTrainerModal()"
+  ></div>
+
+  <!-- MODAL CONTENT -->
+  <div class="relative z-10 w-[90%] max-w-xl bg-black/70 backdrop-blur-lg p-6 rounded-lg shadow-2xl">
+
+    <!-- CLOSE BUTTON -->
+    <button 
+      class="
+        absolute top-3 right-3
+        w-8 h-8 flex items-center justify-center
+        text-pink text-3xl leading-none font-light
+        hover:drop-shadow-[0_0_12px_rgba(255,0,128,0.9)]
+        active:scale-90
+      "
+      (click)="closeTrainerModal()"
+    >
+      ×
+    </button>
+
+    <!-- IMAGE -->
+    <img 
+      [src]="selectedTrainer.modalImage"
+      class="w-full h-64 object-cover rounded-md mb-4"
+    />
+
+    <!-- NAME + ROLE -->
+    <h2 class="text-3xl font-semibold mb-1">{{ selectedTrainer.name }}</h2>
+    <p class="text-pink text-lg mb-4">{{ selectedTrainer.role }}</p>
+
+    <!-- BIO -->
+    <p class="text-base leading-relaxed opacity-90">
+      {{ selectedTrainer.bio }}
+    </p>
+
+  </div>
+</div>
+
+
+
+</section>

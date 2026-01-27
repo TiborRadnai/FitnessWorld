@@ -1,0 +1,29 @@
+/* Ha kell valami extra atmoszféra */
+section {
+  letter-spacing: 0.5px;
+}
+
+.glow-quote-block::before,
+.glow-quote-block::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  pointer-events: none;
+  z-index: 999;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 0, 128, 0.4),
+    rgba(255, 0, 128, 0)
+  );
+}
+
+.glow-quote-block::before {
+  top: 0;
+}
+
+.glow-quote-block::after {
+  bottom: 0;
+  transform: rotate(180deg);
+}

@@ -1,0 +1,24 @@
+.glow-trainers::before,
+.glow-trainers::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  pointer-events: none;
+  z-index: 999;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 0, 128, 0.4),
+    rgba(255, 0, 128, 0)
+  );
+}
+
+.glow-trainers::before {
+  top: 0;
+}
+
+.glow-trainers::after {
+  bottom: 0;
+  transform: rotate(180deg);
+}
