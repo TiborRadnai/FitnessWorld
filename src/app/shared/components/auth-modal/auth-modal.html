@@ -1,0 +1,82 @@
+<!-- OVERLAY -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-50"
+     (click)="closeModal()">
+
+  <!-- MODAL -->
+  <div class="bg-white/10 backdrop-blur-xl rounded-xl p-8 w-[90%] max-w-md text-arcticWhite shadow-xl"
+       (click)="$event.stopPropagation()">
+
+    <!-- TITLE -->
+    <h2 class="text-2xl font-bold mb-6 text-center">
+      {{ mode === 'login' ? 'Login' : 'Create Account' }}
+    </h2>
+
+    <!-- ERROR (only one time!) -->
+    <div *ngIf="errorMessage"
+         class="bg-red-500/20 text-red-300 text-sm p-2 rounded mb-4">
+      {{ errorMessage }}
+    </div>
+
+    <!-- EMAIL -->
+    <label class="block mb-1">Email</label>
+    <input
+      type="email"
+      [(ngModel)]="email"
+      placeholder="Email"
+      class="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/50"
+    />
+
+    <!-- FULL NAME – only upon registration -->
+    <div *ngIf="mode === 'register'">
+      <label class="block mb-1">Full name</label>
+      <input
+        type="text"
+        [(ngModel)]="fullName"
+        placeholder="Your full name"
+        class="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/50"
+      />
+    </div>
+
+    <!-- NICKNAME – only upon registration -->
+    <div *ngIf="mode === 'register'">
+      <label class="block mb-1">Nickname</label>
+      <input
+        type="text"
+        [(ngModel)]="nickname"
+        placeholder="Your nickname"
+        class="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/50"
+      />
+    </div>
+
+    <!-- PASSWORD -->
+    <label class="block mb-1">Password</label>
+    <input
+      type="password"
+      [(ngModel)]="password"
+      placeholder="Password"
+      class="w-full mb-4 p-2 rounded bg-white/20 text-white placeholder-white/50"
+    />
+
+    <!-- SUBMIT BUTTON -->
+    <button
+      (click)="submit()"
+      class="w-full bg-pink-500 hover:bg-pink-600 transition text-white font-semibold py-2 rounded mt-2"
+    >
+      {{ mode === 'login' ? 'Login' : 'Register' }}
+    </button>
+
+    <!-- SWITCH MODE -->
+    <p class="text-center mt-4 text-sm">
+      <span *ngIf="mode === 'login'">
+        No account?
+        <span class="text-pink cursor-pointer" (click)="switchToRegister()">Register</span>
+      </span>
+
+      <span *ngIf="mode === 'register'">
+        Already have an account?
+        <span class="text-pink cursor-pointer" (click)="switchToLogin()">Login</span>
+      </span>
+    </p>
+
+  </div>
+</div>
