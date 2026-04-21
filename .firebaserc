@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "fitnessworld-56f74",
+    "clean": "fitnessworld-webshop"
+  },
+  "targets": {},
+  "etags": {}
+}

@@ -13,13 +13,9 @@
 
 <div class="absolute bottom-0 left-0 w-full h-[2px] bg-pink z-50 pointer-events-none"></div>
 
-
 <div class="absolute bottom-0 left-0 w-full h-20 
             bg-gradient-to-t from-pink to-transparent 
             opacity-40 blur-[40px] pointer-events-none z-50"></div>
-
-
-
 
   <!-- Overlay -->
   <div class="absolute inset-0 bg-black/20 z-0"></div>
@@ -43,7 +39,7 @@
   (mouseleave)="hideControls()"
 >
 
-  <!-- Nyilak -->
+  <!-- Arrows -->
   <button 
     *ngIf="showControls"
     class="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 
@@ -66,7 +62,7 @@
     ❯
   </button>
 
-  <!-- Indikátorok -->
+  <!-- Indicators -->
   <div 
     *ngIf="showControls"
     class="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3"

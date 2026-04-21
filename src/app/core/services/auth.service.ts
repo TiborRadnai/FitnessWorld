@@ -20,7 +20,7 @@ export class AuthService {
 
   private auth = firebaseAuth;
   private userSubject = new BehaviorSubject<User | null>(null);
-  user$ = this.userSubject.asObservable();
+  user$ = this.userSubject.asObservable();   // 🔥 EZT fogjuk használni
 
   constructor() {
     onAuthStateChanged(this.auth, (user) => {
@@ -28,16 +28,13 @@ export class AuthService {
     });
   }
 
-  // 🔥 REGISZTRÁCIÓ FULL NAME + NICKNAME
   async register(email: string, password: string, fullName: string, nickname: string) {
     const cred = await createUserWithEmailAndPassword(this.auth, email, password);
 
-    // Firebase Auth displayName = nickname
     await updateProfile(cred.user, {
       displayName: nickname
     });
 
-    // Firestore user dokumentum
     await setDoc(doc(db, "users", cred.user.uid), {
       fullName,
       nickname,
@@ -56,7 +53,13 @@ export class AuthService {
     return signOut(this.auth);
   }
 
+  // 🔥 A régi currentUser maradhat
   get currentUser() {
     return this.userSubject.value;
+  }
+
+  // 🔥 A Firebase user getter is jó
+  get firebaseUser() {
+    return this.auth.currentUser;
   }
 }

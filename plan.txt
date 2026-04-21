@@ -1,0 +1,89 @@
+1. lépés – Webshop komponens létrehozása (üres váz)
+
+Te ezt most megcsinálod → teljesen jó.
+2. lépés – Firestore termékmodell + FirestoreService
+
+Megcsináljuk a getProducts(), addProduct(), updateProduct(), deleteProduct() metódusokat.
+
+Ez lesz az alap.
+3. lépés – Webshop UI (termékek listázása)
+
+Lebegő PNG-k, neon pink ár, tooltip, kosár ikon.
+
+Ez még csak frontend.
+4. lépés – CartService (kosár logika)
+
+    kosár állapot
+
+    badge frissítés
+
+    demo checkout
+
+5. lépés – Admin felület (termékkezelés)
+
+Ez lesz a nagy falat, de szépen megcsináljuk:
+
+    terméklista admin nézetben
+
+    új termék hozzáadása
+
+    termék szerkesztése
+
+    készlet módosítása
+
+    akció beállítása
+
+    törlés
+
+    kép feltöltés
+
+6. lépés – Admin jogosultság
+
+    Firestore user role mező
+
+    AdminGuard
+
+    Admin link csak adminnak
+
+7. lépés – Demo checkout → Orders kollekció
+
+    rendelés mentése
+
+    userhez kötve
+
+    admin oldalon rendeléslista
+
+
+
+
+    products:
+    -Kettlebell and Dumbbell set 
+    -Dial Weight Adjusting Dumbbell
+    -GYM Dipping Dumbbell
+    -Army bag (man)
+    -Woman gym bag
+    -Bottle 
+    -Elastic Knee Brance 
+    -Fitness matte
+    -Fitness set
+    -Sport activity tracker
+    -Pogo stick
+
+
+✔ Kettlebell and Dumbbell Set
+$129
+
+✔ Dial Weight Adjusting Dumbbell
+$199
+
+✔ GYM Dipping Dumbbell
+$69
+
+✔ Woman Gym Bag
+$49
+
+✔ Fitness Water Bottle
+$12
+
+✔ Sport Activity Tracker
+$89
