@@ -63,6 +63,16 @@ export class Services implements AfterViewInit {
   autoScrollSpeed = 2;
   animationFrameId: number | null = null;
 
+  ngOnInit() {
+    window.addEventListener('openServiceModal', (e: any) => {
+      const title = e.detail;
+      const item = this.services.find(s => s.title === title);
+      if (item) {
+        this.openModal(item);
+      }
+    });
+  }
+
   ngAfterViewInit() {
     const container = this.scrollContainer.nativeElement;
 

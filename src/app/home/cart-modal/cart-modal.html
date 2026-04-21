@@ -1,0 +1,41 @@
+<div *ngIf="show" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+  <div class="bg-black border border-white/10 rounded-xl p-8 w-full max-w-lg">
+
+    <h2 class="text-white text-2xl font-light mb-6">Your Cart</h2>
+
+    <div *ngIf="cartItems.length === 0" class="text-white/60">
+      Your cart is empty.
+    </div>
+
+    <div *ngFor="let item of cartItems" 
+         class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+
+      <div>
+        <div class="text-white">{{ item.name }}</div>
+        <div class="text-[#ff0080] font-bold">${{ item.price }}</div>
+        <div class="text-white/60 text-sm">Quantity: {{ item.quantity }}</div>
+      </div>
+
+      <button class="text-white/60 hover:text-white" (click)="removeFromFirestore(item.id)">
+        Remove
+      </button>
+    </div>
+
+    <div class="text-white text-xl font-light mt-6">
+      Total: 
+      <span class="text-[#ff0080] font-bold">
+        ${{ getFirestoreTotal() }}
+      </span>
+    </div>
+
+    <button
+      class="mt-6 w-full py-2 rounded-lg bg-[#ff0080] text-black font-medium"
+      (click)="close()"> Close
+    </button>
+
+    <button
+      class="mt-4 w-full py-2 rounded-lg bg-white text-black font-medium"
+      (click)="startCheckout()">Checkout
+    </button>
+  </div>
+</div>

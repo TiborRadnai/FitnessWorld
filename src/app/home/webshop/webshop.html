@@ -1,0 +1,59 @@
+<section class="relative w-full h-screen bg-black flex flex-col items-center justify-center px-6 glow-webshop-block">
+
+  <!-- Title -->
+  <h2 class="text-white text-4xl md:text-5xl font-light tracking-wide mb-12 -mt-10 drop-shadow-[0_0_12px_rgba(255,0,128,0.4)]">
+    Fitnessworld Shop
+  </h2>
+
+  <!-- GRID WRAPPER (EZ HIÁNYZOTT!) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-5xl">
+
+    <!-- PRODUCT CARD -->
+    <div
+      *ngFor="let product of products"
+      class="text-center transition-transform duration-300 hover:scale-[1.02] cursor-pointer"
+      (click)="toggleDescription(product.id)"
+      (mouseenter)="expandedProductId = product.id"
+      (mouseleave)="expandedProductId = null"
+    >
+      <img
+        [src]="getImageUrl(product.imageUrl)"
+        alt="{{ product.name }}"
+        class="w-44 h-44 object-contain mx-auto mb-4 drop-shadow-[0_0_12px_rgba(255,0,128,0.3)]"
+      />
+
+      <h3 class="text-white text-lg mb-1">
+        {{ product.name }}
+      </h3>
+
+      <p class="text-[#ff0080] text-2xl font-bold drop-shadow-[0_0_8px_rgba(255,0,128,0.4)] mb-2">
+        ${{ product.price }}
+      </p>
+
+        <div
+            *ngIf="expandedProductId === product.id"
+            class="absolute inset-0 bg-black/80 text-white/80 text-sm p-4 flex items-center justify-center
+                opacity-0 animate-fadeIn rounded-lg"
+        >
+            {{ product.description }}
+        </div>
+
+        <button
+        class="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ff0080] text-black text-sm font-medium
+                shadow-[0_0_12px_rgba(255,0,128,0.5)] hover:brightness-110 transition"
+        (click)="$event.stopPropagation(); addToCart(product)"
+        >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+                d="M2.25 2.25h1.386c.51 0 .955.343 1.087.835l.383 1.437m0 0L6.75 12.75h10.5l2.25-6.75H5.106Zm0 0h14.138M6.75 12.75L5.25 18m1.5-5.25h12m-12 0l1.5 5.25m10.5-5.25l-1.5 5.25m-9 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0Zm12 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0Z" />
+        </svg>
+
+        Add to cart
+        </button>
+
+    </div>
+
+  </div>
+</section>
