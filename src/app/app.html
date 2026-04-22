@@ -1,5 +1,8 @@
-<app-navbar></app-navbar>
+<app-navbar *ngIf="!isAdminRoute"></app-navbar>
+
 <router-outlet></router-outlet>
-<app-footer></app-footer>
-<app-back-to-top></app-back-to-top>
+
+<app-back-to-top *ngIf="!isAdminRoute"></app-back-to-top>
+<app-footer *ngIf="!isAdminRoute"></app-footer>
+
 

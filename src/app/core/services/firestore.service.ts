@@ -122,9 +122,10 @@ async createOrder(userId: string, data: any) {
   const ref = collection(db, `users/${userId}/orders`);
   const docRef = await addDoc(ref, {
     ...data,
+    status: 'completed',      // <-- ITT DEFINIÁLJUK
     createdAt: new Date()
   });
-  return docRef.id; // visszaadjuk az order ID-t
+  return docRef.id;
 }
 
 async addOrderItem(userId: string, orderId: string, item: any) {
