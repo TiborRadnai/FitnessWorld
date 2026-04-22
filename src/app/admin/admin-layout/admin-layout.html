@@ -1,0 +1,32 @@
+<div class="w-full min-h-screen bg-black text-white flex">
+
+  <!-- Sidebar -->
+<aside class="w-64 bg-black/40 backdrop-blur-md border-r border-white/10 p-6">
+  <h2 class="text-xl font-semibold mb-6">Admin</h2>
+
+  <nav class="flex flex-col gap-4">
+
+    <a routerLink="" class="cursor-pointer hover:text-pink transition">Dashboard</a>
+
+    <a routerLink="products" class="cursor-pointer hover:text-pink transition">Products</a>
+    <a routerLink="add-product" class="cursor-pointer hover:text-pink transition">Add Product</a>
+    <a routerLink="inventory" class="cursor-pointer hover:text-pink transition">Inventory</a>
+
+    <a routerLink="orders" class="cursor-pointer hover:text-pink transition">Orders</a>
+
+    <a routerLink="users" class="cursor-pointer hover:text-pink transition">Users</a>
+
+    <a routerLink="newsletter" class="cursor-pointer hover:text-pink transition">Newsletter</a>
+
+    <a routerLink="settings" class="cursor-pointer hover:text-pink transition">Settings</a>
+
+  </nav>
+</aside>
+
+
+  <!-- Content -->
+  <main class="flex-1 p-10">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

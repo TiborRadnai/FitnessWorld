@@ -1,43 +1,68 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Navbar } from './shared/navbar/navbar'; 
-import { Footer } from './shared/footer/footer'; 
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';   // <-- EZ KELL
+import { Navbar } from './shared/navbar/navbar';
+import { Footer } from './shared/footer/footer';
 import { BackToTop } from './shared/back-to-top/back-to-top';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, Footer, BackToTop],
+  standalone: true,
+  imports: [RouterOutlet, Navbar, Footer, BackToTop, CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('tempapp');
+
+  title = signal('tempapp');
+  isAdminRoute = signal(false);
+
+  constructor(private router: Router) {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.isAdminRoute.set(event.url.startsWith('/admin'));
+      });
+  }
 
   ngOnInit() {
-  let isTouchpad = false;
-  let lastTime = 0;
+    let isTouchpad = false;
+    let lastTime = 0;
 
-  window.addEventListener('wheel', (e) => {
-    const now = Date.now();
-    const delta = e.deltaY;
+    window.addEventListener('wheel', (e) => {
 
-    // Touchpad detektálás (kisebb delta, gyors ismétlődés)
-    if (Math.abs(delta) < 50 || now - lastTime < 50) {
-      isTouchpad = true;
-    }
-    lastTime = now;
+      // 🔥 ADMIN OLDALON TILTSUK LE
+      if (this.isAdminRoute()) return;
 
-    if (isTouchpad) return; // touchpad → normál scroll
+      const now = Date.now();
+      const delta = e.deltaY;
 
-    e.preventDefault();
+      if (Math.abs(delta) < 50 || now - lastTime < 50) {
+        isTouchpad = true;
+      }
+      lastTime = now;
 
-    const direction = delta > 0 ? 1 : -1;
-    const sections = Array.from(document.querySelectorAll('section'));
-    const current = sections.findIndex(sec => sec.getBoundingClientRect().top >= -10);
+      if (isTouchpad) return;
 
-    const nextIndex = Math.min(sections.length - 1, Math.max(0, current + direction));
-    sections[nextIndex].scrollIntoView({ behavior: 'smooth' });
-  }, { passive: false });
-}
+      e.preventDefault();
+
+      const direction = delta > 0 ? 1 : -1;
+      const sections = Array.from(document.querySelectorAll('section'));
+
+      // 🔥 HA NINCS SECTION, NE FUSSON TOVÁBB
+      if (sections.length === 0) return;
+
+      const current = sections.findIndex(sec => sec.getBoundingClientRect().top >= -10);
+
+      const nextIndex = Math.min(sections.length - 1, Math.max(0, current + direction));
+
+      // 🔥 BIZTONSÁGI ELLENŐRZÉS
+      if (!sections[nextIndex]) return;
+
+      sections[nextIndex].scrollIntoView({ behavior: 'smooth' });
+
+    }, { passive: false });
+  }
 
 }
