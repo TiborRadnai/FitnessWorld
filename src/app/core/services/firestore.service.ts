@@ -4,19 +4,18 @@ import {
   collection,
   addDoc,
   getDocs,
-  setDoc,          
+  getDoc,
+  setDoc,
   query,
   where,
   doc,
   updateDoc,
   deleteDoc,
-  increment,
   onSnapshot
 } from 'firebase/firestore';
 
 import { Booking } from '../models/booking.model';
 import { Product } from '../models/product';
-
 
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
@@ -52,20 +51,36 @@ export class FirestoreService {
   // WEBSHOP: TERMÉKEK
   // -------------------------
 
+  async getProduct(productId: string): Promise<Product | null> {
+    const ref = doc(db, `products/${productId}`);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) return null;
+
+    const data = snap.data() as Omit<Product, 'id'>;
+    return { id: snap.id, ...data };
+  }
+
   async getProducts(): Promise<Product[]> {
     const ref = collection(db, 'products');
     const snap = await getDocs(ref);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() })) as Product[];
+
+    return snap.docs.map(d => {
+      const data = d.data() as Omit<Product, 'id'>;
+      return { id: d.id, ...data };
+    });
   }
 
   async addProduct(data: Product) {
+    const { id, ...rest } = data;
     const ref = collection(db, 'products');
-    return await addDoc(ref, data);
+    return await addDoc(ref, rest);
   }
 
   async updateProduct(productId: string, data: Partial<Product>) {
+    const { id, ...rest } = data;
     const ref = doc(db, 'products', productId);
-    return await updateDoc(ref, data as any);
+    return await updateDoc(ref, rest as any);
   }
 
   async deleteProduct(productId: string) {
@@ -73,84 +88,107 @@ export class FirestoreService {
     return await deleteDoc(ref);
   }
 
+  // 🔥 SOHA NEM MEGY MINUSZBA
   async decreaseStock(productId: string, quantity: number) {
     const ref = doc(db, `products/${productId}`);
+    const snap = await getDoc(ref);
 
-    await updateDoc(ref, {
-      stock: increment(-quantity)
+    if (!snap.exists()) return;
+
+    const data = snap.data() as any;
+    const current = data.stock ?? 0;
+
+    const newStock = Math.max(0, current - quantity);
+
+    await updateDoc(ref, { stock: newStock });
+  }
+
+  // -------------------------
+  // WEBSHOP: KOSÁR
+  // -------------------------
+
+  async addToUserCart(userId: string, product: Product) {
+    const ref = doc(db, `users/${userId}/cart/${product.id}`);
+    const snap = await getDoc(ref);
+
+    if (snap.exists()) {
+      // 🔥 már van ilyen termék → quantity növelése
+      const current = snap.data() as any;
+      const newQty = (current.quantity || 1) + 1;
+
+      await updateDoc(ref, {
+        quantity: newQty
+      });
+
+    } else {
+      // 🔥 új termék → quantity = 1
+      await setDoc(ref, {
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1
+      });
+    }
+  }
+
+  getUserCart(userId: string, callback: (items: any[]) => void) {
+    const ref = collection(db, `users/${userId}/cart`);
+
+    return onSnapshot(ref, (snapshot) => {
+      const items = snapshot.docs.map(d => {
+        const data = d.data() as any;
+        return {
+          id: d.id,            // cart item ID
+          productId: data.productId, // valódi termék ID
+          ...data
+        };
+      });
+      callback(items);
     });
   }
 
-  async addToUserCart(userId: string, product: Product) {
-  const ref = doc(db, `users/${userId}/cart/${product.id}`);
+  async getUserCartOnce(userId: string): Promise<any[]> {
+    const ref = collection(db, `users/${userId}/cart`);
+    const snap = await getDocs(ref);
 
-  await updateDoc(ref, {
-    id: product.id,
-    name: product.name,
-    price: product.price,
-    imageUrl: product.imageUrl,
-    quantity: increment(1)
-  }).catch(async () => {
-    // Ha még nincs ilyen dokumentum, létrehozzuk quantity = 1-gyel
-    await setDoc(ref, {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      quantity: 1
+    return snap.docs.map(d => {
+      const data = d.data() as any;
+      return {
+        id: d.id,
+        productId: data.productId,
+        ...data
+      };
     });
-  });
-}
+  }
 
-getUserCart(userId: string, callback: (items: any[]) => void) {
-  const ref = collection(db, `users/${userId}/cart`);
+  // -------------------------
+  // WEBSHOP: RENDELÉSEK
+  // -------------------------
 
-  return onSnapshot(ref, (snapshot) => {
-    const items = snapshot.docs.map(d => ({
-      id: d.id,
-      ...d.data()
-    }));
-    callback(items);
-  });
-}
+  async createOrder(userId: string, data: any) {
+    const ref = collection(db, `users/${userId}/orders`);
+    const docRef = await addDoc(ref, {
+      total: data.total,
+      items: data.items,
+      status: 'completed',
+      createdAt: new Date()
+    });
+    return docRef.id;
+  }
 
-// -------------------------
-// WEBSHOP: RENDELÉSEK
-// -------------------------
+  async addOrderItem(userId: string, orderId: string, item: any) {
+    const ref = doc(db, `users/${userId}/orders/${orderId}/items/${item.id}`);
+    return await setDoc(ref, item);
+  }
 
-async createOrder(userId: string, data: any) {
-  const ref = collection(db, `users/${userId}/orders`);
-  const docRef = await addDoc(ref, {
-    ...data,
-    status: 'completed',      // <-- ITT DEFINIÁLJUK
-    createdAt: new Date()
-  });
-  return docRef.id;
-}
+  async clearUserCart(userId: string) {
+    const ref = collection(db, `users/${userId}/cart`);
+    const snap = await getDocs(ref);
 
-async addOrderItem(userId: string, orderId: string, item: any) {
-  const ref = doc(db, `users/${userId}/orders/${orderId}/items/${item.id}`);
-  return await setDoc(ref, item);
-}
+    const deletions = snap.docs.map(d =>
+      deleteDoc(doc(db, `users/${userId}/cart/${d.id}`))
+    );
 
-async clearUserCart(userId: string) {
-  const ref = collection(db, `users/${userId}/cart`);
-  const snap = await getDocs(ref);
-
-  const deletions = snap.docs.map(d =>
-    deleteDoc(doc(db, `users/${userId}/cart/${d.id}`))
-  );
-
-  return Promise.all(deletions);
-}
-
-async getUserCartOnce(userId: string): Promise<any[]> {
-  const ref = collection(db, `users/${userId}/cart`);
-  const snap = await getDocs(ref);
-  return snap.docs.map(d => ({
-    id: d.id,
-    ...d.data()
-  }));
-}
-
+    return Promise.all(deletions);
+  }
 }

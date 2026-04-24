@@ -1,18 +1,17 @@
-import { Component, computed, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';   // <-- EZ KELL
-import { collection, collectionGroup, getDocs } from 'firebase/firestore';
+import { Component, computed, signal, effect } from '@angular/core';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
+import { collection, collectionGroup, onSnapshot, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { Product } from '../../../types/product';
-import { getAuth, signInAnonymously } from 'firebase/auth';
+import { Chart } from 'chart.js/auto';
 
 @Component({
   selector: 'admin-dashboard',
   standalone: true,
-  imports: [CommonModule],   // <-- IDE IS KELL
+  imports: [CommonModule, NgIf, NgFor],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-
 export class Dashboard {
 
   products = signal<Product[]>([]);
@@ -21,43 +20,143 @@ export class Dashboard {
   orderItems = signal<any[]>([]);
   isOrderModalOpen = signal(false);
 
+  private userMap = new Map<string, string>();
+  private chart: Chart | null = null;
+  private userOrdersMap = new Map<string, any[]>();
+
   constructor() {
-    const auth = getAuth();
-    signInAnonymously(auth);
-    this.loadData();
+    this.listenToUsers();
+    this.listenToProducts();
+    this.listenToOrders();
+
+    effect(() => {
+      const data = this.dailyRevenue();
+      if (!data.length) return;
+
+      const canvas = document.getElementById('revenueChart') as HTMLCanvasElement | null;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      if (this.chart) this.chart.destroy();
+
+      this.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(d => d.day),
+          datasets: [{
+            data: data.map(d => d.total),
+            borderColor: '#ff2bd4',
+            backgroundColor: 'rgba(255, 43, 212, 0.2)',
+            tension: 0.3
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#ccc' } },
+            y: { ticks: { color: '#ccc' } }
+          }
+        }
+      });
+    });
   }
 
-  async loadData() {
-    // USERS → map userId → fullName
-    const usersSnap = await getDocs(collection(db, 'users'));
-    const userMap = new Map<string, string>();
-    usersSnap.forEach(doc => {
-      const data = doc.data() as any;
-      userMap.set(doc.id, data.fullName || data.nickname || data.email);
+  // -----------------------------
+  // REALTIME USERS
+  // -----------------------------
+  listenToUsers() {
+    onSnapshot(collection(db, 'users'), snap => {
+      this.userMap.clear();
+      snap.forEach(doc => {
+        const data = doc.data() as any;
+        this.userMap.set(doc.id, data.fullName || data.nickname || data.email);
+      });
     });
+  }
 
-    // PRODUCTS
-    const productsSnap = await getDocs(collection(db, 'products'));
-    this.products.set(
-      productsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Product))
-    );
-
-    // ORDERS – MINDEN USER ALÓL
-    const ordersSnap = await getDocs(collectionGroup(db, 'orders'));
-    this.orders.set(
-      ordersSnap.docs.map(d => {
-        const data = d.data();
-        const userId = d.ref.parent.parent?.id || '';
-
+  // -----------------------------
+  // REALTIME PRODUCTS
+  // -----------------------------
+  listenToProducts() {
+    onSnapshot(collection(db, 'products'), snap => {
+      const products: Product[] = snap.docs.map(d => {
+        const data = d.data() as any;
         return {
           id: d.id,
-          userId,
-          customerName: userMap.get(userId) || userId,
-          ...data,
-          status: data['status'] ?? 'completed' 
+          name: data.name ?? 'Unnamed product',
+          price: data.price ?? 0,
+          stock: data.stock ?? 0
         };
-      })
-    );
+      });
+      this.products.set(products);
+    });
+  }
+
+  // -----------------------------
+  // REALTIME ORDERS
+  // -----------------------------
+listenToOrders() {
+  // FIGYELJÜK A USERS KOLLEKCIÓT
+  onSnapshot(collection(db, 'users'), usersSnap => {
+    // új users snapshot → nem töröljük a map-et, csak új usereknél adunk hozzá listenert
+    usersSnap.forEach(userDoc => {
+      const userId = userDoc.id;
+
+      if (this.userOrdersMap.has(userId)) {
+        // már van listener ehhez a userhez
+        return;
+      }
+
+      const ordersRef = collection(db, `users/${userId}/orders`);
+
+      onSnapshot(ordersRef, async ordersSnap => {
+        const userOrders: any[] = [];
+
+        for (const d of ordersSnap.docs) {
+          const data = d.data();
+
+          const itemsSnap = await getDocs(
+            collection(db, `users/${userId}/orders/${d.id}/items`)
+          );
+
+          const items = itemsSnap.docs.map(i => ({
+            id: i.id,
+            ...i.data()
+          }));
+
+          userOrders.push({
+            id: d.id,
+            userId,
+            customerName: this.userMap.get(userId) || userId,
+            ...data,
+            status: data['status'] ?? 'completed',
+            items
+          });
+        }
+
+        // user saját rendelései frissülnek
+        this.userOrdersMap.set(userId, userOrders);
+
+        // MINDEN USER RENDELÉSÉNEK ÚJRAÖSSZEGYŰJTÉSE
+        const allOrders: any[] = [];
+        this.userOrdersMap.forEach(list => allOrders.push(...list));
+
+        this.orders.set(allOrders);
+      });
+    });
+  });
+}
+
+
+  // -----------------------------
+  // HELPERS
+  // -----------------------------
+  formatDate(value: any) {
+    if (!value) return null;
+    const date = value.toDate ? value.toDate() : new Date(value);
+    return date;
   }
 
   totalOrders = computed(() => this.orders().length);
@@ -80,11 +179,14 @@ export class Dashboard {
     return this.products().filter(p => (p.stock as number) < 5).length;
   });
 
+  lowStockProducts = computed(() => {
+    return this.products().filter(p => (p.stock as number) < 5);
+  });
+
   async openOrder(order: any) {
     this.selectedOrder.set(order);
     this.isOrderModalOpen.set(true);
 
-    // ITEMS lekérése Firestore-ból
     const itemsSnap = await getDocs(
       collection(db, `users/${order.userId}/orders/${order.id}/items`)
     );
@@ -93,6 +195,14 @@ export class Dashboard {
       itemsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
     );
   }
+
+  sortedOrders = computed(() => {
+    return [...this.orders()].sort((a, b) => {
+      const da = (a.createdAt?.toDate?.() ?? new Date(a.createdAt)).getTime();
+      const db = (b.createdAt?.toDate?.() ?? new Date(b.createdAt)).getTime();
+      return db - da; // 🔥 legfrissebb elöl
+    });
+  });
 
   closeOrder() {
     this.isOrderModalOpen.set(false);
@@ -122,7 +232,7 @@ export class Dashboard {
     const map = new Map<string, { name: string; qty: number; revenue: number }>();
 
     this.orders().forEach(o => {
-      (o.items || []).forEach((item: any) => {
+      o.items.forEach((item: any) => {
         if (!map.has(item.id)) {
           map.set(item.id, { name: item.name, qty: 0, revenue: 0 });
         }
@@ -136,4 +246,6 @@ export class Dashboard {
       .sort((a, b) => b.qty - a.qty)
       .slice(0, 5);
   });
+
+  
 }
