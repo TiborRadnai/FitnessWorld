@@ -33,9 +33,8 @@ serve(async (req) => {
         },
         quantity: item.quantity,
       })),
-success_url: "http://localhost:4200/checkout-success",
-cancel_url: "http://localhost:4200/checkout-canceled",
-
+      success_url: "http://localhost:4200/?success=true",
+      cancel_url: "http://localhost:4200/?canceled=true",
     });
 
     return new Response(JSON.stringify({ url: session.url }), {

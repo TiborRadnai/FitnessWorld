@@ -68,6 +68,8 @@ export class Navbar {
   ngOnInit() {
     this.unsubscribeUser = this.auth.user$.subscribe(async user => {
 
+      this.currentUser = user;   // <-- EZ HIÁNYZOTT
+
       if (!user) {
         this.cartCount = 0;
 
@@ -88,6 +90,7 @@ export class Navbar {
         await this.handleStripeSuccess(user.uid);
       }
     });
+
   }
 
   ngOnDestroy() {
@@ -132,7 +135,8 @@ export class Navbar {
       }
 
       const orderId = await this.firestore.createOrder(userId, {
-        total: cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
+        total: cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
+        items: cartItems   // <-- EZ KELL
       });
 
       // 🔥 ORDER ITEMS + STOCK UPDATE

@@ -9,13 +9,14 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-5xl">
 
     <!-- PRODUCT CARD -->
-    <div
-      *ngFor="let product of products"
-      class="text-center transition-transform duration-300 hover:scale-[1.02] cursor-pointer"
-      (click)="toggleDescription(product.id)"
-      (mouseenter)="expandedProductId = product.id"
-      (mouseleave)="expandedProductId = null"
-    >
+      <div
+        *ngFor="let product of products"
+        class="text-center transition-transform duration-300 hover:scale-[1.02] cursor-pointer relative"
+        [attr.data-product]="product.id"
+        (mouseenter)="expandedProductId = product.id"
+        (mouseleave)="expandedProductId = null"
+      >
+
       <img
         [src]="getImageUrl(product.imageUrl)"
         alt="{{ product.name }}"
@@ -30,19 +31,21 @@
         ${{ product.price }}
       </p>
 
-        <div
-            *ngIf="expandedProductId === product.id"
-            class="absolute inset-0 bg-black/80 text-white/80 text-sm p-4 flex items-center justify-center
-                opacity-0 animate-fadeIn rounded-lg"
-        >
-            {{ product.description }}
-        </div>
+<div
+  *ngIf="expandedProductId === product.id"
+  class="absolute inset-0 bg-black/80 text-white/80 text-sm p-4 flex items-center justify-center
+         opacity-0 animate-fadeIn rounded-lg z-10"
+>
+  {{ product.description }}
+</div>
 
-        <button
-        class="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ff0080] text-black text-sm font-medium
-                shadow-[0_0_12px_rgba(255,0,128,0.5)] hover:brightness-110 transition"
+
+      <button
+        class="relative z-20 mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ff0080] text-black text-sm font-medium
+              shadow-[0_0_12px_rgba(255,0,128,0.5)] hover:brightness-110 transition"
         (click)="$event.stopPropagation(); addToCart(product)"
-        >
+      >
+
         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
             class="w-5 h-5">

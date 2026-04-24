@@ -44,6 +44,13 @@ export class CartModal implements OnInit, OnDestroy {
 
   open() {
     this.show = true;
+
+    const user = this.auth.firebaseUser;
+    if (!user) return;
+
+    this.firestore.getUserCartOnce(user.uid).then(items => {
+      this.cartItems = items;
+    });
   }
 
   close() {
@@ -64,7 +71,24 @@ export class CartModal implements OnInit, OnDestroy {
       .toFixed(2);
   }
 
-  startCheckout() {
+  async startCheckout() {
+    const user = this.auth.firebaseUser;
+    if (!user) {
+      alert('Please log in to continue.');
+      return;
+    }
+
+    // 🔥 KÉSZLETELLENŐRZÉS
+    for (const item of this.cartItems) {
+      const product = await this.firestore.getProduct(item.productId);
+
+      if (!product || product.stock < item.quantity) {
+        alert(`Sorry, "${item.name}" is out of stock or not enough quantity available.`);
+        return;
+      }
+    }
+
+    // 🔥 Ha minden oké → mehet a Stripe
     const items = this.cartItems.map(item => ({
       name: item.name,
       price: item.price,
@@ -72,8 +96,6 @@ export class CartModal implements OnInit, OnDestroy {
     }));
 
     this.checkout.createSession(items)
-      .catch(err => {
-        console.error('Checkout error:', err);
-      });
+      .catch(err => console.error('Checkout error:', err));
   }
 }

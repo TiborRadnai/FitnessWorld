@@ -36,12 +36,49 @@ export class Webshop implements OnInit {
     this.expandedProductId = this.expandedProductId === productId ? null : productId;
   }
 
-  addToCart(product: Product) {
-    // this.cart.add(product);
-
+  async addToCart(product: Product) {
     const user = this.auth.firebaseUser;
-    if (user) {
-      this.firestore.addToUserCart(user.uid, product);
+
+    if (!user) {
+      this.showLocalToast(product.id, "Please log in first", "red");
+      return;
     }
+
+    // 🔥 KÉSZLETELLENŐRZÉS
+    const fresh = await this.firestore.getProduct(product.id);
+
+    if (!fresh || fresh.stock < 1) {
+      this.showLocalToast(product.id, `"${product.name}" is out of stock`, "red");
+      return;
+    }
+
+    // 🔥 KOSÁRBA TÉTEL
+    await this.firestore.addToUserCart(user.uid, product);
+
+    // 🔥 SIKERES VISSZAJELZÉS
+    this.showLocalToast(product.id, `"${product.name}" added!`, "green");
   }
+
+  private showLocalToast(productId: string, message: string, color: "red" | "green") {
+    const card = document.querySelector(`[data-product="${productId}"]`);
+    if (!card) return;
+
+    const toast = document.createElement('div');
+
+    toast.innerHTML = `
+      <div class="absolute top-2 right-2 z-50
+                  ${color === "red" ? "bg-red-600" : "bg-green-600"}
+                  text-white px-3 py-2 rounded-lg shadow-lg text-sm
+                  animate-[fadeIn_0.2s_ease-out]">
+        ${message}
+      </div>
+    `;
+
+    toast.classList.add("local-toast");
+    card.appendChild(toast);
+
+    setTimeout(() => toast.classList.add("opacity-0"), 1500);
+    setTimeout(() => toast.remove(), 2000);
+  }
+
 }
