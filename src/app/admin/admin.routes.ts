@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
-import { AdminLayout } from './admin-layout/admin-layout';
 import { Dashboard } from './pages/dashboard/dashboard';
+import { Inventory } from './pages/inventory/inventory';
 
 export const ADMIN_ROUTES: Routes = [
-  {
-    path: '',
-    component: AdminLayout,
-    children: [
-      { path: '', component: Dashboard }
-    ]
+  { path: '', component: Dashboard },
+  { path: 'inventory', component: Inventory},
+  { path: 'sales-overview',
+    loadComponent: () =>
+      import('./pages/sales-overview/sales-overview').then(m => m.SalesOverview)
   }
+
 ];
+
