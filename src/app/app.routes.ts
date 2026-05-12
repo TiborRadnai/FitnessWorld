@@ -10,16 +10,7 @@ export const routes: Routes = [
     component: PublicLayout,
     children: [
       { path: '', component: Home },
-
-      // 🔥 IDE JÖN AZ ORDER SUCCESS OLDAL
-      {
-        path: 'order-success',
-        loadComponent: () =>
-          import('./home/webshop/order-success/order-success')
-            .then(m => m.OrderSuccess)
-      },
-
-      // később ide jön majd: shop, product/:id, cart, checkout, stb.
+      // ide jön a shop, contact, stb.
     ]
   },
 
@@ -29,5 +20,4 @@ export const routes: Routes = [
     children: ADMIN_ROUTES
   }
 ];
-
 
