@@ -16,6 +16,9 @@ import {
 
 import { Booking } from '../models/booking.model';
 import { Product } from '../models/product';
+import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
+
+const storage = getStorage();
 
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
@@ -71,7 +74,7 @@ export class FirestoreService {
     });
   }
 
-  async addProduct(data: Product) {
+  async addProduct(data: Partial<Product>) {
     const { id, ...rest } = data;
     const ref = collection(db, 'products');
     return await addDoc(ref, rest);
@@ -126,7 +129,8 @@ export class FirestoreService {
         productId: product.id,
         name: product.name,
         price: product.price,
-        quantity: 1
+        quantity: 1,
+        category: product.category
       });
     }
   }
@@ -190,5 +194,56 @@ export class FirestoreService {
     );
 
     return Promise.all(deletions);
+  }
+
+  // -------------------------
+  // STORAGE: KÉPEK
+  // -------------------------
+
+  async listImages(): Promise<{ name: string, url: string }[]> {
+    const folderRef = ref(storage, 'products');
+    const result = await listAll(folderRef);
+
+    const files = await Promise.all(
+      result.items.map(async item => {
+        const url = await getDownloadURL(item);
+        return { name: item.name, url };
+      })
+    );
+
+    return files;
+  }
+
+  async uploadImage(file: File): Promise<string> {
+    const fileRef = ref(storage, `products/${file.name}`);
+    await uploadBytes(fileRef, file);
+    return file.name; // fontos: a fájl neve marad
+  }
+
+  async getImageUrl(fileName: string): Promise<string> {
+    const fileRef = ref(storage, `products/${fileName}`);
+    return await getDownloadURL(fileRef);
+  }
+
+  async getAllOrders(): Promise<any[]> {
+    const usersRef = collection(db, 'users');
+    const usersSnap = await getDocs(usersRef);
+
+    let allOrders: any[] = [];
+
+    for (const user of usersSnap.docs) {
+      const ordersRef = collection(db, `users/${user.id}/orders`);
+      const ordersSnap = await getDocs(ordersRef);
+
+      const orders = ordersSnap.docs.map(d => ({
+        id: d.id,
+        userId: user.id,
+        ...d.data()
+      }));
+
+      allOrders = [...allOrders, ...orders];
+    }
+
+    return allOrders;
   }
 }

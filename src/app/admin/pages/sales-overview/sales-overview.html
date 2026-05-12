@@ -1,0 +1,182 @@
+<div class="p-10 text-white">
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between mb-10">
+    <h1 class="text-3xl font-semibold tracking-tight">Sales Overview</h1>
+
+    <!-- DATE FILTER -->
+    <div class="flex items-center gap-3">
+      <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm">Today</button>
+      <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm">Last 7 days</button>
+      <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm">Last 30 days</button>
+      <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm">This month</button>
+      <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm">Last month</button>
+      <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm">This year</button>
+    </div>
+  </div>
+
+  <!-- TOP STATS CARDS -->
+  <div class="grid grid-cols-4 gap-6 mb-10">
+
+    <div class="bg-black/40 border border-white/10 rounded-xl p-6 shadow-xl">
+      <p class="text-sm opacity-70">Total Revenue</p>
+      <h2 class="text-3xl font-bold mt-2">€0</h2>
+      <p class="text-xs text-green-400 mt-1">+0% vs last period</p>
+    </div>
+
+    <div class="bg-black/40 border border-white/10 rounded-xl p-6 shadow-xl">
+      <p class="text-sm opacity-70">Total Orders</p>
+      <h2 class="text-3xl font-bold mt-2">0</h2>
+      <p class="text-xs text-green-400 mt-1">+0% vs last period</p>
+    </div>
+
+    <div class="bg-black/40 border border-white/10 rounded-xl p-6 shadow-xl">
+      <p class="text-sm opacity-70">Items Sold</p>
+      <h2 class="text-3xl font-bold mt-2">0</h2>
+      <p class="text-xs text-green-400 mt-1">+0% vs last period</p>
+    </div>
+
+    <div class="bg-black/40 border border-white/10 rounded-xl p-6 shadow-xl">
+      <p class="text-sm opacity-70">Average Order Value</p>
+      <h2 class="text-3xl font-bold mt-2">€0</h2>
+      <p class="text-xs text-green-400 mt-1">+0% vs last period</p>
+    </div>
+
+  </div>
+
+  <!-- REVENUE CHART -->
+  <div class="bg-black/40 border border-white/10 rounded-xl p-8 shadow-xl mb-10">
+    <h2 class="text-xl font-semibold mb-4">Revenue (Selected Period)</h2>
+    <canvas id="revenueChart" height="120"></canvas>
+  </div>
+
+  <!-- ORDERS CHART -->
+  <div class="bg-black/40 border border-white/10 rounded-xl p-8 shadow-xl mb-10">
+    <h2 class="text-xl font-semibold mb-4">Orders (Selected Period)</h2>
+    <canvas id="ordersChart" height="120"></canvas>
+  </div>
+
+    <!-- ALL PRODUCTS PERFORMANCE -->
+    <div class="bg-black/40 border border-white/10 rounded-xl p-8 shadow-xl mb-10">
+    <h2 class="text-xl font-semibold mb-6">All Products Performance</h2>
+
+    <table class="min-w-full text-sm">
+        <thead class="text-white/70 uppercase text-xs tracking-wider border-b border-white/10">
+        <tr>
+            <th class="px-4 py-3 text-left">Product</th>
+            <th class="px-4 py-3 text-left">Sold</th>
+            <th class="px-4 py-3 text-left">Revenue</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr
+            *ngFor="let p of allProducts()"
+            class="border-b border-white/10 hover:bg-white/5 transition"
+        >
+            <td class="px-4 py-3 font-medium">{{ p.name }}</td>
+            <td class="px-4 py-3">{{ p.totalSold }}</td>
+            <td class="px-4 py-3">€{{ p.revenue | number:'1.0-2' }}</td>
+        </tr>
+
+        <tr *ngIf="!allProducts().length" class="border-b border-white/10">
+            <td class="px-4 py-3" colspan="3">No sales data yet</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <!-- TOP CATEGORIES -->
+    <div class="bg-black/40 border border-white/10 rounded-xl p-8 shadow-xl mb-10">
+    <h2 class="text-xl font-semibold mb-6">Categories Performance</h2>
+
+    <div class="grid grid-cols-2 gap-10">
+
+        <!-- Donut Chart -->
+        <div>
+        <canvas id="categoriesChart" height="200"></canvas>
+        </div>
+
+        <!-- Table -->
+        <div>
+        <table class="min-w-full text-sm">
+            <thead class="text-white/70 uppercase text-xs tracking-wider border-b border-white/10">
+            <tr>
+                <th class="px-4 py-3 text-left">Category</th>
+                <th class="px-4 py-3 text-left">Sold</th>
+                <th class="px-4 py-3 text-left">Revenue</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr
+                *ngFor="let c of categories()"
+                class="border-b border-white/10 hover:bg-white/5 transition"
+            >
+                <td class="px-4 py-3 font-medium">{{ c.category }}</td>
+                <td class="px-4 py-3">{{ c.totalSold }}</td>
+                <td class="px-4 py-3">€{{ c.revenue | number:'1.0-2' }}</td>
+            </tr>
+
+            <tr *ngIf="!categories().length" class="border-b border-white/10">
+                <td class="px-4 py-3" colspan="3">No category data yet</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+
+    </div>
+    </div>
+
+
+  <!-- WORST PRODUCTS -->
+  <div class="bg-black/40 border border-white/10 rounded-xl p-8 shadow-xl mb-10">
+    <h2 class="text-xl font-semibold mb-6">Worst Performing Products</h2>
+
+    <table class="min-w-full text-sm">
+      <thead class="text-white/70 uppercase text-xs tracking-wider border-b border-white/10">
+        <tr>
+          <th class="px-4 py-3 text-left">Product</th>
+          <th class="px-4 py-3 text-left">Sold</th>
+          <th class="px-4 py-3 text-left">Revenue</th>
+          <th class="px-4 py-3 text-left">Trend</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr class="border-b border-white/10">
+          <td class="px-4 py-3">–</td>
+          <td class="px-4 py-3">0</td>
+          <td class="px-4 py-3">€0</td>
+          <td class="px-4 py-3">–</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RECENT ORDERS -->
+  <div class="bg-black/40 border border-white/10 rounded-xl p-8 shadow-xl mb-10">
+    <h2 class="text-xl font-semibold mb-6">Recent Orders</h2>
+
+    <table class="min-w-full text-sm">
+      <thead class="text-white/70 uppercase text-xs tracking-wider border-b border-white/10">
+        <tr>
+          <th class="px-4 py-3 text-left">Order ID</th>
+          <th class="px-4 py-3 text-left">Amount</th>
+          <th class="px-4 py-3 text-left">Date</th>
+          <th class="px-4 py-3 text-left">Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr class="border-b border-white/10">
+          <td class="px-4 py-3">–</td>
+          <td class="px-4 py-3">€0</td>
+          <td class="px-4 py-3">–</td>
+          <td class="px-4 py-3">–</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
