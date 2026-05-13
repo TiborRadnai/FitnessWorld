@@ -1,30 +1,89 @@
-<div class="w-full min-h-screen bg-black text-white flex">
+<div class="w-full h-screen bg-black text-white flex overflow-hidden">
 
-  <!-- Sidebar -->
-<aside class="w-64 bg-black/40 backdrop-blur-md border-r border-white/10 p-6">
-  <h2 class="text-xl font-semibold mb-6">Admin</h2>
+  <!-- SIDEBAR (sticky) -->
+  <aside class="w-64 bg-black/40 backdrop-blur-md border-r border-pink border-opacity-30 
+                 shadow-[0_0_15px_rgba(255,16,240,0.35)] p-6 relative flex-shrink-0">
 
-  <nav class="flex flex-col gap-4">
+    <!-- Neon vertical line -->
+    <div class="absolute right-0 top-0 h-full w-[2px] bg-pink/70 shadow-[0_0_12px_rgba(255,16,240,0.8)]"></div>
 
-    <a routerLink="/admin" class="cursor-pointer hover:text-pink transition">Dashboard</a>
+    <h2 class="text-xl font-semibold mb-6">Admin</h2>
 
-    <a routerLink="/admin/inventory" class="cursor-pointer hover:text-pink transition">Inventory</a>
+<nav class="flex flex-col gap-4">
 
-    <a routerLink="/admin/sales-overview" class="cursor-pointer hover:text-pink transition">Sales Overview</a>
+  <a routerLink="dashboard"
+     routerLinkActive="active-link"
+     [routerLinkActiveOptions]="{ exact: true }"
+     class="cursor-pointer hover:text-pink transition">
+    Dashboard
+  </a>
 
-    <a routerLink="/admin/users" class="cursor-pointer hover:text-pink transition">Users</a>
+  <a routerLink="inventory"
+     routerLinkActive="active-link"
+     class="cursor-pointer hover:text-pink transition">
+    Inventory
+  </a>
 
-    <a routerLink="/admin/newsletter" class="cursor-pointer hover:text-pink transition">Newsletter</a>
+  <a routerLink="sales-overview"
+     routerLinkActive="active-link"
+     class="cursor-pointer hover:text-pink transition">
+    Sales Overview
+  </a>
 
-    <a routerLink="/admin/settings" class="cursor-pointer hover:text-pink transition">Settings</a>
+  <a routerLink="users"
+     routerLinkActive="active-link"
+     class="cursor-pointer hover:text-pink transition">
+    Users
+  </a>
 
-  </nav>
-</aside>
+  <a routerLink="newsletter"
+     routerLinkActive="active-link"
+     class="cursor-pointer hover:text-pink transition">
+    Newsletter
+  </a>
+
+  <a routerLink="settings"
+     routerLinkActive="active-link"
+     class="cursor-pointer hover:text-pink transition">
+    Settings
+  </a>
+
+</nav>
 
 
-  <!-- Content -->
-  <main class="flex-1 p-10">
-    <router-outlet></router-outlet>
-  </main>
+
+  </aside>
+
+  <!-- MAIN AREA (column layout) -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- TOPBAR (sticky) -->
+    <header class="w-full bg-black/40 backdrop-blur-md border-b border-pink border-opacity-30 
+                    shadow-[0_0_12px_rgba(255,16,240,0.25)] px-8 py-4 flex items-center justify-between flex-shrink-0">
+
+      <!-- LEFT: PAGE TITLE -->
+      <div class="text-lg font-semibold tracking-wide">
+        Admin Panel
+      </div>
+
+      <!-- CENTER: CLOCK -->
+      <div class="text-white/80 text-sm font-mono tracking-wider">
+        {{ currentTime }}
+      </div>
+
+      <!-- RIGHT: EXIT BUTTON -->
+      <a routerLink="/"
+         class="px-4 py-2 bg-pink hover:bg-pink/80 rounded-lg text-sm font-semibold 
+                shadow-[0_0_10px_rgba(255,16,240,0.35)] hover:shadow-[0_0_14px_rgba(255,16,240,0.55)] transition">
+        Open Storefront
+      </a>
+    </header>
+
+    <!-- CONTENT (scrollable) -->
+    <main class="flex-1 overflow-y-auto p-10">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
 
 </div>

@@ -1,0 +1,164 @@
+<div class="flex flex-col gap-10 text-white">
+  <!-- Header -->
+  <div>
+    <h1 class="text-3xl font-bold mb-2">Users</h1>
+    <p class="text-white/60">Manage customer accounts and track user activity.</p>
+  </div>
+
+  <div class="bg-black/40 border border-white/10 rounded-xl p-8 shadow-xl">
+    <h2 class="text-xl font-semibold mb-6">All Users</h2>
+
+    <table class="min-w-full text-sm">
+      <thead class="text-white/70 uppercase text-xs tracking-wider border-b border-white/10">
+        <tr>
+          <th class="px-4 py-3 text-left">Name</th>
+          <th class="px-4 py-3 text-left">Nickname</th>
+          <th class="px-4 py-3 text-left">Email</th>
+          <th class="px-4 py-3 text-left">Registered</th>
+          <th class="px-4 py-3 text-left">Orders</th>
+          <th class="px-4 py-3 text-left">Total Spent</th>
+          <th class="px-4 py-3 text-left">Rank</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngFor="let u of users()">
+
+          <!-- MAIN ROW -->
+          <tr
+            class="border-b border-white/10 cursor-pointer transition
+                   hover:bg-pink/10 hover:border-pink hover:border-opacity-40"
+            (click)="toggleUser(u.id)"
+          >
+            <td class="px-4 py-3">{{ u.fullName || '–' }}</td>
+            <td class="px-4 py-3 text-white/70">{{ u.nickname || '–' }}</td>
+            <td class="px-4 py-3">{{ u.email }}</td>
+            <td class="px-4 py-3 text-white/70">{{ formatDate(u.createdAt) }}</td>
+            <td class="px-4 py-3">{{ u.ordersCount }}</td>
+            <td class="px-4 py-3">€{{ u.totalSpent }}</td>
+
+            <td class="px-4 py-3">
+              <span
+                *ngIf="u.rank !== 'none'; else noRank"
+                class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border"
+                [ngClass]="{
+                  'bg-yellow-500/10 text-yellow-400 border-yellow-500/40': u.rank === 'gold',
+                  'bg-gray-300/10 text-gray-200 border-gray-400/40': u.rank === 'silver',
+                  'bg-orange-500/10 text-orange-400 border-orange-500/40': u.rank === 'bronze'
+                }"
+              >
+                <span
+                  class="w-2 h-2 rounded-full"
+                  [ngClass]="{
+                    'bg-yellow-400': u.rank === 'gold',
+                    'bg-gray-300': u.rank === 'silver',
+                    'bg-orange-400': u.rank === 'bronze'
+                  }"
+                ></span>
+                <span class="capitalize">{{ u.rank }} member</span>
+              </span>
+
+              <ng-template #noRank>
+                <span class="text-white/40 text-xs">–</span>
+              </ng-template>
+            </td>
+          </tr>
+
+          <!-- EXPANDED ROW -->
+          <tr 
+            *ngIf="expandedUserId() === u.id"
+            class="bg-black/30 border border-pink border-opacity-40
+                   shadow-[0_0_15px_rgba(255,16,240,0.45)] transition"
+          >
+            <td colspan="7" class="px-6 py-5 border-t border-pink border-opacity-40">
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 text-sm">
+
+                <div>
+                  <p class="text-white/60 text-xs mb-1">User ID</p>
+                  <p class="mb-3 break-all">{{ u.id }}</p>
+
+                  <p class="text-white/60 text-xs mb-1">Full name</p>
+                  <p class="mb-3">{{ u.fullName || '–' }}</p>
+
+                  <p class="text-white/60 text-xs mb-1">Nickname</p>
+                  <p class="mb-3">{{ u.nickname || '–' }}</p>
+
+                  <p class="text-white/60 text-xs mb-1">Email</p>
+                  <p class="mb-3">{{ u.email }}</p>
+                </div>
+
+                <div>
+                  <p class="text-white/60 text-xs mb-1">Registered at</p>
+                  <p class="mb-3">{{ formatDate(u.createdAt) }}</p>
+
+                  <p class="text-white/60 text-xs mb-1">Orders count</p>
+                  <p class="mb-3">{{ u.ordersCount }}</p>
+
+                  <p class="text-white/60 text-xs mb-1">Total spent</p>
+                  <p class="mb-3">€{{ u.totalSpent }}</p>
+
+                  <p class="text-white/60 text-xs mb-1">Last order</p>
+                  <p class="mb-3">{{ u.lastOrder ? formatDate(u.lastOrder) : '–' }}</p>
+
+                  <p class="text-white/60 text-xs mb-1">Rank</p>
+                  <p class="mb-3">
+                    <ng-container [ngSwitch]="u.rank">
+                      <span *ngSwitchCase="'gold'" class="text-yellow-400 font-medium">Gold member</span>
+                      <span *ngSwitchCase="'silver'" class="text-gray-200 font-medium">Silver member</span>
+                      <span *ngSwitchCase="'bronze'" class="text-orange-400 font-medium">Bronze member</span>
+                      <span *ngSwitchDefault class="text-white/40">No rank</span>
+                    </ng-container>
+                  </p>
+                </div>
+
+              </div>
+
+              <div class="mt-4">
+                <p class="font-semibold mb-2 text-sm">Orders</p>
+
+                <table class="min-w-full text-xs">
+                  <thead class="text-white/60 uppercase text-[10px] tracking-wider border-b border-white/10">
+                    <tr>
+                      <th class="px-2 py-2 text-left">Order ID</th>
+                      <th class="px-2 py-2 text-left">Amount</th>
+                      <th class="px-2 py-2 text-left">Date</th>
+                      <th class="px-2 py-2 text-left">Status</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr *ngFor="let o of u.orders" class="border-b border-white/10">
+                      <td class="px-2 py-2 break-all">#{{ o.id }}</td>
+                      <td class="px-2 py-2">€{{ o.total }}</td>
+                      <td class="px-2 py-2">{{ formatDate(o.createdAt) }}</td>
+                      <td class="px-2 py-2">
+                        <span
+                          class="text-xs"
+                          [class.text-green-400]="o.status === 'completed'"
+                          [class.text-yellow-400]="o.status === 'processing'"
+                          [class.text-red-400]="o.status === 'cancelled'"
+                        >
+                          {{ o.status || 'completed' }}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <tr *ngIf="!u.orders || u.orders.length === 0">
+                      <td colspan="4" class="px-2 py-3 text-white/40 text-xs">
+                        No orders yet.
+                      </td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+
+            </td>
+          </tr>
+
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -16,14 +16,15 @@ export class SalesOverview implements OnInit {
   totalOrders = signal(0);
   totalItemsSold = signal(0);
   averageOrderValue = signal(0);
-
+  activeFilter = signal<'today' | '7' | '30' | 'thisMonth' | 'lastMonth' | 'thisYear' | null>(null);
+  
   revenueChart: any;
   ordersChart: any;
 
   orders: any[] = [];
   products: any[] = [];
   categoriesChart: any;
-  
+  expandedOrderId = signal<string | null>(null);
   allProducts = signal<
     { productId: string; name: string; totalSold: number; revenue: number }[]
   >([]);
@@ -50,7 +51,30 @@ export class SalesOverview implements OnInit {
   }
 
   async loadOrders() {
-    this.orders = await this.firestore.getAllOrders();
+    const rawOrders = await this.firestore.getAllOrders();
+
+    const enrichedOrders = await Promise.all(
+      rawOrders.map(async (o: any) => {
+        const user = await this.firestore.getUserData(o.userId);
+        return {
+          ...o,
+          customerName: user?.fullName || 'N/A',
+          customerEmail: user?.email || 'N/A'
+        };
+      })
+    );
+
+    this.orders = enrichedOrders.sort((a, b) => {
+      const da = a.createdAt.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+      const db = b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+      return db.getTime() - da.getTime(); // 🔥 legújabb elöl
+    });
+  }
+
+  toggleOrder(id: string) {
+    this.expandedOrderId.set(
+      this.expandedOrderId() === id ? null : id
+    );
   }
 
   calculateStats() {
@@ -139,19 +163,32 @@ export class SalesOverview implements OnInit {
     });
   }
 
+  groupOrdersByDay(orders: any[]) {
+    const map = new Map<string, number>();
+
+    for (const o of orders) {
+      const d = this.formatDate(o.createdAt); // pl. "13.05.2026"
+      map.set(d, (map.get(d) || 0) + 1);
+    }
+
+    return {
+      labels: Array.from(map.keys()),
+      data: Array.from(map.values())
+    };
+  }
+
   buildOrdersChart() {
     const ctx = document.getElementById('ordersChart') as HTMLCanvasElement;
 
-    const labels = this.orders.map(o => this.formatDate(o.createdAt));
-    const data = this.orders.map(() => 1);
+    const grouped = this.groupOrdersByDay(this.orders);
 
     this.ordersChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels,
+        labels: grouped.labels,
         datasets: [{
           label: 'Orders',
-          data,
+          data: grouped.data,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
           borderColor: '#3b82f6',
           borderWidth: 1
@@ -247,6 +284,109 @@ export class SalesOverview implements OnInit {
             labels: { color: '#ccc' }
           }
         }
+      }
+    });
+  }
+
+  applyFilter(type: 'today' | '7' | '30' | 'thisMonth' | 'lastMonth' | 'thisYear') {
+    this.activeFilter.set(type);
+
+    const now = new Date();
+    let start: Date | null = null;
+
+    switch (type) {
+      case 'today':
+        start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        break;
+
+      case '7':
+        start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        break;
+
+      case '30':
+        start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        break;
+
+      case 'thisMonth':
+        start = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+
+      case 'lastMonth':
+        start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        break;
+
+      case 'thisYear':
+        start = new Date(now.getFullYear(), 0, 1);
+        break;
+    }
+
+    // 🔥 SZŰRT ORDEREK
+    const filtered = start
+      ? this.orders.filter(o => {
+          const d = o.createdAt.toDate ? o.createdAt.toDate() : new Date(o.createdAt);
+          return d >= start;
+        })
+      : this.orders;
+
+    // 🔥 ÚJRA SZÁMOLJUK A STATOKAT
+    this.calculateStatsFiltered(filtered);
+
+    // 🔥 CHARTOK ÚJRAÉPÍTÉSE
+    this.rebuildCharts(filtered);
+  }
+
+  calculateStatsFiltered(orders: any[]) {
+    const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+    const totalItems = orders.reduce((sum, o) => {
+      return sum + (o.items?.reduce((s: number, i: any) => s + i.quantity, 0) || 0);
+    }, 0);
+
+    this.totalRevenue.set(totalRevenue);
+    this.totalOrders.set(orders.length);
+    this.totalItemsSold.set(totalItems);
+    this.averageOrderValue.set(orders.length ? totalRevenue / orders.length : 0);
+  }
+
+  rebuildCharts(orders: any[]) {
+    if (this.revenueChart) this.revenueChart.destroy();
+    if (this.ordersChart) this.ordersChart.destroy();
+
+    // Revenue chart
+    const ctx1 = document.getElementById('revenueChart') as HTMLCanvasElement;
+    const revenueLabels = orders.map(o => this.formatDate(o.createdAt));
+    const revenueData = orders.map(o => o.total);
+
+    this.revenueChart = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: revenueLabels,
+        datasets: [{
+          label: 'Revenue (€)',
+          data: revenueData,
+          borderColor: '#ec4899',
+          backgroundColor: 'rgba(236, 72, 153, 0.2)',
+          borderWidth: 2,
+          tension: 0.3,
+          fill: true
+        }]
+      }
+    });
+
+    // Orders chart (AGGREGÁLT!)
+    const ctx2 = document.getElementById('ordersChart') as HTMLCanvasElement;
+    const grouped = this.groupOrdersByDay(orders);
+
+    this.ordersChart = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: grouped.labels,
+        datasets: [{
+          label: 'Orders',
+          data: grouped.data,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          borderColor: '#3b82f6',
+          borderWidth: 1
+        }]
       }
     });
   }

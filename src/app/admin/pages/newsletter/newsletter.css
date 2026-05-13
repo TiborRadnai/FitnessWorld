@@ -1,0 +1,27 @@
+/* Quill editor fehér dobozban legyen kényelmesebb */
+
+.ql-container {
+  border: none !important;
+  font-size: 14px;
+}
+
+.ql-editor {
+  user-select: text !important;
+  pointer-events: auto !important;
+  min-height: 100%;
+  outline: none;
+}
+
+/* Toolbar fehér háttérhez igazítva */
+#newsletter-toolbar {
+  background: #f9fafb;
+}
+
+.ql-toolbar {
+  position: relative;
+  z-index: 10;
+}
+
+.ql-picker-options {
+  z-index: 20;
+}

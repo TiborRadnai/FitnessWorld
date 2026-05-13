@@ -1,0 +1,56 @@
+div img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+div p {
+  margin-bottom: 1rem;
+}
+
+/* A teljes preview tartalom normalizálása */
+.preview-content {
+  color: #000 !important;
+  background: #fff !important;
+  padding: 1rem;
+  line-height: 1.6 !important;
+  font-size: 16px;
+}
+
+/* Minden elemre érvényes override */
+.preview-content * {
+  color: #000 !important;
+  line-height: 1.6 !important;
+  margin: 0 0 1rem 0 !important;
+  max-width: 100%;
+}
+
+/* Képek */
+.preview-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Headline-ek */
+.preview-content h1,
+.preview-content h2,
+.preview-content h3,
+.preview-content h4 {
+  font-weight: bold;
+  margin: 1.2rem 0 0.6rem 0 !important;
+  color: #000 !important;
+}
+
+/* Listák */
+.preview-content ul,
+.preview-content ol {
+  padding-left: 1.5rem !important;
+}
+
+/* Linkek */
+.preview-content a {
+  color: #0066cc !important;
+  text-decoration: underline;
+}
+
+
