@@ -1,19 +1,22 @@
-<div class="p-10 text-white">
-
+<div class="flex flex-col gap-10 text-white">
   <!-- Header -->
-  <div class="flex items-center justify-between mb-10">
+  <div>
     <h1 class="text-3xl font-bold mb-2">Inventory</h1>
+    <p class="text-white/60">Control your products, stock levels, and availability.</p>
+  </div>
+  <div class="flex items-center justify-between mb-10">
+    <h1 class="text-3xl font-bold mb-2"></h1>
 
     <button
       (click)="openAddProduct()"
-      class="px-5 py-2 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg transition"
+      class="px-5 py-2 bg-pink hover:bg-pink/80 text-white font-semibold rounded-lg transition shadow-[0_0_12px_rgba(255,16,240,0.35)] hover:shadow-[0_0_18px_rgba(255,16,240,0.55)]"
     >
       + Add Product
     </button>
   </div>
 
   <!-- Table wrapper -->
-  <div class="overflow-x-auto rounded-xl border border-white/10 bg-white/10 backdrop-blur-md shadow-xl">
+  <div class="overflow-x-auto rounded-xl border border-pink border-opacity-20 bg-white/5 backdrop-blur-md shadow-[0_0_12px_rgba(255,16,240,0.25)]">
     <table class="min-w-full text-sm">
       <thead class="bg-white/5 text-white/70 uppercase text-xs tracking-wider border-b border-white/10">
         <tr>
@@ -29,20 +32,20 @@
       <tbody>
         <tr
           *ngFor="let product of products()"
-          class="border-b border-white/10 hover:bg-white/5 transition"
+          class="border-b border-white/10 hover:bg-pink/10 transition"
         >
           <td class="px-6 py-4">
             <img
               [src]="product.imageUrl"
               alt="{{ product.name }}"
-              class="w-16 h-16 object-cover rounded-lg"
+              class="w-16 h-16 object-cover rounded-lg border border-pink border-opacity-20 shadow-[0_0_8px_rgba(255,16,240,0.25)]"
             />
           </td>
 
           <td class="px-6 py-4 font-medium">{{ product.name }}</td>
 
           <td class="px-6 py-4">
-            <span class="font-semibold text-pink-400">€{{ product.price }}</span>
+            <span class="font-semibold text-pink">€{{ product.price }}</span>
           </td>
 
           <td class="px-6 py-4">
@@ -66,17 +69,17 @@
             </span>
           </td>
 
-          <td class="px-6 py-4 items-center gap-3">
+          <td class="px-6 py-4 flex items-center gap-3">
             <button
               (click)="openEditProduct(product)"
-              class="px-6 py-2 rounded-md text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-white transition"
+              class="px-6 py-2 rounded-md text-xs font-semibold bg-slate-700 hover:bg-pink/20 hover:border-pink hover:border-opacity-40 border border-transparent text-white transition"
             >
               Edit
             </button>
 
             <button
               (click)="deleteProduct(product.id)"
-              class="px-3 py-1 rounded-md text-xs font-semibold bg-pink-600 hover:text-red-700 text-white transition"
+              class="px-3 py-1 rounded-md text-xs font-semibold bg-pink hover:bg-pink/80 text-white transition shadow-[0_0_10px_rgba(255,16,240,0.35)] hover:shadow-[0_0_14px_rgba(255,16,240,0.55)]"
             >
               Delete
             </button>
@@ -92,7 +95,7 @@
   *ngIf="showProductModal()"
   class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50"
 >
-  <div class="bg-[#0f0f0f] border border-white/10 rounded-2xl p-10 w-[650px] shadow-2xl text-white">
+  <div class="bg-[#0f0f0f] border border-pink border-opacity-20 rounded-2xl p-10 w-[650px] shadow-[0_0_18px_rgba(255,16,240,0.35)] text-white">
 
     <h2 class="text-3xl font-semibold mb-8">
       {{ editingProduct() ? 'Edit Product' : 'Add New Product' }}
@@ -107,7 +110,7 @@
           type="text"
           [(ngModel)]="form().name"
           name="name"
-          class="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none"
+          class="w-full bg-white/5 border border-pink border-opacity-20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-pink focus:ring-opacity-40"
         />
       </div>
 
@@ -118,7 +121,7 @@
           [(ngModel)]="form().description"
           name="description"
           rows="3"
-          class="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none"
+          class="w-full bg-white/5 border border-pink border-opacity-20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-pink focus:ring-opacity-40"
         ></textarea>
       </div>
 
@@ -130,7 +133,7 @@
             type="number"
             [(ngModel)]="form().price"
             name="price"
-            class="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none"
+            class="w-full bg-white/5 border border-pink border-opacity-20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-pink focus:ring-opacity-40"
           />
         </div>
 
@@ -140,7 +143,7 @@
             type="number"
             [(ngModel)]="form().stock"
             name="stock"
-            class="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none"
+            class="w-full bg-white/5 border border-pink border-opacity-20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-pink focus:ring-opacity-40"
           />
         </div>
       </div>
@@ -153,7 +156,7 @@
 
           <!-- IMAGE PREVIEW -->
           <div
-            class="w-28 h-28 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center overflow-hidden"
+            class="w-28 h-28 bg-white/5 border border-pink border-opacity-20 rounded-lg flex items-center justify-center overflow-hidden shadow-[0_0_10px_rgba(255,16,240,0.25)]"
           >
             <img
               *ngIf="form().imageUrl"
@@ -170,7 +173,7 @@
           <button
             type="button"
             (click)="openImagePicker()"
-            class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-semibold"
+            class="px-4 py-2 bg-slate-800 hover:bg-pink/20 border border-transparent hover:border-pink hover:border-opacity-40 rounded-lg text-sm font-semibold transition"
           >
             Choose Image
           </button>
@@ -178,14 +181,13 @@
         </div>
       </div>
 
-
       <!-- ACTION BUTTONS -->
       <div class="flex items-center justify-end gap-4 pt-4">
 
         <button
           type="button"
           (click)="showProductModal.set(false)"
-          class="px-5 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm"
+          class="px-5 py-2 bg-slate-700 hover:bg-pink/20 border border-transparent hover:border-pink hover:border-opacity-40 rounded-lg text-sm transition"
         >
           Cancel
         </button>
@@ -193,7 +195,7 @@
         <button
           type="button"
           (click)="saveProduct()"
-          class="px-5 py-2 bg-pink-600 hover:bg-pink-700 rounded-lg text-sm font-semibold"
+          class="px-5 py-2 bg-pink hover:bg-pink/80 rounded-lg text-sm font-semibold shadow-[0_0_12px_rgba(255,16,240,0.35)] hover:shadow-[0_0_18px_rgba(255,16,240,0.55)] transition"
         >
           Save Product
         </button>
@@ -209,14 +211,14 @@
   *ngIf="showImagePicker()"
   class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50"
 >
-  <div class="bg-[#0f0f0f] border border-white/10 rounded-2xl p-10 w-[800px] shadow-2xl text-white">
+  <div class="bg-[#0f0f0f] border border-pink border-opacity-20 rounded-2xl p-10 w-[800px] shadow-[0_0_18px_rgba(255,16,240,0.35)] text-white">
 
     <div class="flex items-center justify-between mb-8">
       <h2 class="text-2xl font-semibold">Media Library</h2>
 
       <!-- ADD NEW IMAGE BUTTON -->
       <label
-        class="px-4 py-2 bg-pink-600 hover:bg-pink-700 rounded-lg text-sm font-semibold cursor-pointer flex items-center gap-2"
+        class="px-4 py-2 bg-pink hover:bg-pink/80 rounded-lg text-sm font-semibold cursor-pointer flex items-center gap-2 shadow-[0_0_12px_rgba(255,16,240,0.35)] hover:shadow-[0_0_18px_rgba(255,16,240,0.55)] transition"
       >
         <span class="text-lg font-bold">+</span> Add Image
         <input type="file" (change)="uploadNewImage($event)" class="hidden" />
@@ -228,7 +230,7 @@
 
       <div
         *ngFor="let img of images()"
-        class="cursor-pointer border border-white/10 rounded-xl p-3 hover:bg-white/5 transition flex flex-col items-center"
+        class="cursor-pointer border border-pink border-opacity-20 rounded-xl p-3 hover:bg-pink/10 transition flex flex-col items-center shadow-[0_0_10px_rgba(255,16,240,0.25)] hover:shadow-[0_0_14px_rgba(255,16,240,0.45)]"
         (click)="selectImage(img.name)"
       >
         <img [src]="img.url" class="w-full h-32 object-cover rounded-lg" />
@@ -241,7 +243,7 @@
     <div class="mt-8 text-right">
       <button
         (click)="showImagePicker.set(false)"
-        class="px-5 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm"
+        class="px-5 py-2 bg-slate-700 hover:bg-pink/20 border border-transparent hover:border-pink hover:border-opacity-40 rounded-lg text-sm transition"
       >
         Close
       </button>
@@ -249,5 +251,3 @@
 
   </div>
 </div>
-
-

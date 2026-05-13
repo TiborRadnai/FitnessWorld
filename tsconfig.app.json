@@ -1,11 +1,16 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": []
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
   },
   "files": [],
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "src/declarations.d.ts"
   ],
   "exclude": [
     "src/**/*.spec.ts",

@@ -246,4 +246,22 @@ export class FirestoreService {
 
     return allOrders;
   }
+
+  async getUserData(userId: string): Promise<{ fullName?: string; email?: string } | null> {
+    const ref = doc(db, `users/${userId}`);
+    const snap = await getDoc(ref);
+    return snap.exists() ? (snap.data() as any) : null;
+  }
+
+  async getUsers(): Promise<any[]> {
+    const ref = collection(db, 'users');
+    const snap = await getDocs(ref);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  }
+
+  async getOrdersForUser(userId: string): Promise<any[]> {
+    const ref = collection(db, `users/${userId}/orders`);
+    const snap = await getDocs(ref);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  }
 }

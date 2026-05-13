@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Globális beállítások */
 html, body {
   scroll-behavior: smooth;
   height: 100%;
