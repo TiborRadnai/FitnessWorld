@@ -1,0 +1,10 @@
+.snap-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+
+.snap {
+  scroll-snap-align: start;
+  hoeight: 100vh;
+}

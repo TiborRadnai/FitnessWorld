@@ -38,7 +38,7 @@ export class CartModal implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.unsubscribe) {
-      this.unsubscribe();
+      this.unsubscribe.unsubscribe();  // ✅ nem this.unsubscribe()
     }
   }
 

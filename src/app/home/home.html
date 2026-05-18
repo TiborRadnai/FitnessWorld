@@ -1,33 +1,45 @@
 <div class="w-full flex flex-col">
 
-  <div id="home">
-    <app-header></app-header>
-  </div>
+  <div class="snap-container w-full overflow-y-scroll">
 
-  <app-quote-block 
-    text="You can’t climb the ladder of success with your hands in your pockets." 
-    author="Arnold Schwarzenegger">
-  </app-quote-block>
+    <section id="home" class="snap">
+      <app-header></app-header>
+    </section>
 
-  <div id="services">
-    <app-services></app-services>
-  </div>
+    <section class="snap">
+      <app-quote-block 
+        text="You can’t climb the ladder of success with your hands in your pockets." 
+        author="Arnold Schwarzenegger">
+      </app-quote-block>
+    </section>
 
-  <app-quote-block 
-    text="Some people want it to happen. Others make it happen." 
-    author="Michael Jordan">
-  </app-quote-block>
+    <section id="services" class="snap">
+      <app-services></app-services>
+    </section>
 
-  <div id="trainers">
-    <app-trainers></app-trainers>
-  </div>
+    <section class="snap">
+      <app-quote-block 
+        text="Some people want it to happen. Others make it happen." 
+        author="Michael Jordan">
+      </app-quote-block>
+    </section>
 
-  <div id="booking">
-    <app-booking-calendar></app-booking-calendar>
-  </div>
+    <section id="trainers" class="snap">
+      <app-trainers></app-trainers>
+    </section>
 
-  <div id="webshop">
-    <app-webshop></app-webshop>
+    <section id="booking" class="snap">
+      <app-booking-calendar></app-booking-calendar>
+    </section>
+
+    <section id="webshop" class="snap">
+      <app-webshop></app-webshop>
+    </section>
+
+    <section id="contact" class="snap">
+      <app-contact></app-contact>
+    </section>
+
   </div>
 
 </div>

@@ -70,23 +70,53 @@ Ez lesz a nagy falat, de szépen megcsináljuk:
     -Pogo stick
 
 
-✔ Kettlebell and Dumbbell Set
-$129
+✔ Kettlebell and Dumbbell Set — Men (Black)
+  Description: Premium black kettlebell + dumbbell combo built for full‑body strength training.
+  Price: $129
+
+✔ Kettlebell and Dumbbell Set — Women (Color Edition)
+  Description: Vibrant color kettlebell + dumbbell set designed for versatile home workouts.
+  Price: $119 
 
 ✔ Dial Weight Adjusting Dumbbell
-$199
+  Description: Single adjustable dumbbell with precision dial system for seamless weight transitions.
+  Price: $199
 
 ✔ GYM Dipping Dumbbell
-$69
+  Description: Compact dipping dumbbell designed for upper‑body strength training and controlled resistance.
+  Price: $69
 
 ✔ Woman Gym Bag
-$49
+  Description: Lightweight premium gym bag with breathable compartments and water‑resistant exterior.
+  Price: $49
 
 ✔ Fitness Water Bottle
-$12
+  Description: BPA‑free insulated bottle that keeps drinks cold for hours during intense workouts.
+  Price: $12
 
 ✔ Sport Activity Tracker
-$89
+  Description: Advanced fitness tracker with heart‑rate monitoring and real‑time performance analytics.
+  Price: $89
+
+✔ Army Bag (man)
+  Description: Durable tactical gym bag with reinforced straps and ventilated compartments for daily training.
+  Price: $59
+
+✔ Elastic Knee Brace
+  Description: Compression knee brace offering joint stability and flexible support during intense workouts.
+  Price: $29
+
+✔ Fitness Equipment Set (mat, dumbbells, jump rope)
+  Description: Complete home workout kit featuring a cushioned mat, light dumbbells, and a speed jump rope.
+  Price: $79
+
+✔ Fitness Mat
+  Description: High‑density non‑slip fitness mat designed for comfort, balance, and full‑body training.
+  Price: $39
+
+✔ Pogo Stick
+Description: Heavy‑duty pogo stick engineered for balance training, cardio, and fun full‑body workouts.
+Price: $89
 
 
 

@@ -12,10 +12,9 @@ bootstrapApplication(App, {
   providers: [
     ...(appConfig.providers ?? []),
 
+
     provideHttpClient(withFetch()),
-
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-
     provideFunctions(() => getFunctions(undefined, 'europe-west1')),
   ]
 })

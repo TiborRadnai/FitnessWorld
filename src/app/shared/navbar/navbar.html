@@ -59,9 +59,19 @@
 
       <!-- Logged in -->
       <div *ngIf="currentUser" class="flex items-center gap-4 text-arcticWhite">
+
         <span class="px-3 py-1 rounded-full border border-pink text-pink font-medium text-sm">
           Hello, {{ currentUser.displayName || currentUser.email }}
         </span>
+
+        <!-- ADMIN BUTTON — csak Daniel látja -->
+      <a *ngIf="isDaniel"
+        href="#"
+        (click)="goAdmin(); $event.preventDefault()"
+        class="px-3 py-1 rounded-full bg-pink text-white font-medium text-sm hover:bg-pink/80 transition">
+        Admin
+      </a>
+      
         <button (click)="logout()" class="hover:text-pink transition">Logout</button>
       </div>
 

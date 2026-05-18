@@ -45,7 +45,7 @@
           <td class="px-6 py-4 font-medium">{{ product.name }}</td>
 
           <td class="px-6 py-4">
-            <span class="font-semibold text-pink">€{{ product.price }}</span>
+            <span class="font-semibold text-pink">${{ product.price }}</span>
           </td>
 
           <td class="px-6 py-4">
@@ -128,7 +128,7 @@
       <!-- PRICE + STOCK -->
       <div class="flex gap-6">
         <div class="flex-1">
-          <label class="block text-sm mb-1 opacity-70">Price (€)</label>
+          <label class="block text-sm mb-1 opacity-70">Price ($)</label>
           <input
             type="number"
             [(ngModel)]="form().price"
