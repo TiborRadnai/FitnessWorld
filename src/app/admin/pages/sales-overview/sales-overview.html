@@ -59,7 +59,7 @@
 
     <div class="bg-black/40 border border-pink border-opacity-20 rounded-xl p-6 shadow-[0_0_12px_rgba(255,16,240,0.25)] transition hover:shadow-[0_0_18px_rgba(255,16,240,0.45)]">
       <p class="text-sm opacity-70">Total Revenue</p>
-      <h2 class="text-3xl font-bold mt-2">€{{ totalRevenue() }}</h2>
+      <h2 class="text-3xl font-bold mt-2">${{ totalRevenue() }}</h2>
       <p class="text-xs text-green-400 mt-1">+0% vs last period</p>
     </div>
 
@@ -77,7 +77,7 @@
 
     <div class="bg-black/40 border border-pink border-opacity-20 rounded-xl p-6 shadow-[0_0_12px_rgba(255,16,240,0.25)] transition hover:shadow-[0_0_18px_rgba(255,16,240,0.45)]">
       <p class="text-sm opacity-70">Average Order Value</p>
-      <h2 class="text-3xl font-bold mt-2">€{{ averageOrderValue() }}</h2>
+      <h2 class="text-3xl font-bold mt-2">${{ averageOrderValue().toFixed(1) }}</h2>
       <p class="text-xs text-green-400 mt-1">+0% vs last period</p>
     </div>
 
@@ -88,8 +88,8 @@
     <h2 class="text-xl font-semibold mb-4">Revenue (Selected Period)</h2>
 
     <div class="mt-4">
-      <p class="text-sm opacity-70">Revenue €</p>
-      <h2 class="text-3xl font-bold mt-1">€{{ totalRevenue() }}</h2>
+      <p class="text-sm opacity-70">Revenue $</p>
+      <h2 class="text-3xl font-bold mt-1">${{ totalRevenue() }}</h2>
     </div>
 
     <canvas id="revenueChart" height="120"></canvas>
@@ -121,7 +121,7 @@
         >
           <td class="px-4 py-3 font-medium">{{ p.name }}</td>
           <td class="px-4 py-3">{{ p.totalSold }}</td>
-          <td class="px-4 py-3">€{{ p.revenue | number:'1.0-2' }}</td>
+          <td class="px-4 py-3">v{{ p.revenue | number:'1.0-2' }}</td>
         </tr>
 
         <tr *ngIf="!allProducts().length" class="border-b border-white/10">
@@ -160,7 +160,7 @@
             >
               <td class="px-4 py-3 font-medium">{{ c.category }}</td>
               <td class="px-4 py-3">{{ c.totalSold }}</td>
-              <td class="px-4 py-3">€{{ c.revenue | number:'1.0-2' }}</td>
+              <td class="px-4 py-3">${{ c.revenue | number:'1.0-2' }}</td>
             </tr>
 
             <tr *ngIf="!categories().length" class="border-b border-white/10">
@@ -194,7 +194,7 @@
         >
           <td class="px-4 py-3">{{ p.name }}</td>
           <td class="px-4 py-3">{{ p.totalSold }}</td>
-          <td class="px-4 py-3">€{{ p.revenue }}</td>
+          <td class="px-4 py-3">${{ p.revenue }}</td>
           <td class="px-4 py-3">
             <span 
               [class.text-red-400]="p.totalSold === 0"
@@ -230,7 +230,7 @@
             (click)="toggleOrder(o.id)"
           >
             <td class="px-4 py-3">{{ o.customerName }}</td>
-            <td class="px-4 py-3">€{{ o.total }}</td>
+            <td class="px-4 py-3">${{ o.total }}</td>
             <td class="px-4 py-3">{{ formatDate(o.createdAt) }}</td>
             <td class="px-4 py-3">
               <span 
@@ -272,8 +272,8 @@
                     <tr *ngFor="let item of o.items" class="border-b border-white/10">
                       <td class="px-2 py-2">{{ item.name }}</td>
                       <td class="px-2 py-2">{{ item.quantity }}</td>
-                      <td class="px-2 py-2">€{{ item.price }}</td>
-                      <td class="px-2 py-2">€{{ item.quantity * item.price }}</td>
+                      <td class="px-2 py-2">${{ item.price }}</td>
+                      <td class="px-2 py-2">${{ item.quantity * item.price }}</td>
                     </tr>
                   </tbody>
                 </table>

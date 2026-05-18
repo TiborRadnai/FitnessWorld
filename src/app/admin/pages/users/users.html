@@ -35,7 +35,7 @@
             <td class="px-4 py-3">{{ u.email }}</td>
             <td class="px-4 py-3 text-white/70">{{ formatDate(u.createdAt) }}</td>
             <td class="px-4 py-3">{{ u.ordersCount }}</td>
-            <td class="px-4 py-3">€{{ u.totalSpent }}</td>
+            <td class="px-4 py-3">${{ u.totalSpent }}</td>
 
             <td class="px-4 py-3">
               <span
@@ -96,7 +96,7 @@
                   <p class="mb-3">{{ u.ordersCount }}</p>
 
                   <p class="text-white/60 text-xs mb-1">Total spent</p>
-                  <p class="mb-3">€{{ u.totalSpent }}</p>
+                  <p class="mb-3">${{ u.totalSpent }}</p>
 
                   <p class="text-white/60 text-xs mb-1">Last order</p>
                   <p class="mb-3">{{ u.lastOrder ? formatDate(u.lastOrder) : '–' }}</p>
@@ -130,7 +130,7 @@
                   <tbody>
                     <tr *ngFor="let o of u.orders" class="border-b border-white/10">
                       <td class="px-2 py-2 break-all">#{{ o.id }}</td>
-                      <td class="px-2 py-2">€{{ o.total }}</td>
+                      <td class="px-2 py-2">${{ o.total }}</td>
                       <td class="px-2 py-2">{{ formatDate(o.createdAt) }}</td>
                       <td class="px-2 py-2">
                         <span

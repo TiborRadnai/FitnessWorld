@@ -1,6 +1,12 @@
 import { Component, computed, signal, effect } from '@angular/core';
-import { CommonModule, NgIf, NgFor } from '@angular/common';
-import { collection, collectionGroup, onSnapshot, getDocs } from 'firebase/firestore';
+import {
+  CommonModule,
+  NgIf,
+  NgFor,
+  NgClass,
+  DatePipe
+} from '@angular/common';
+import { collection, onSnapshot, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { Product } from '../../../types/product';
 import { Chart } from 'chart.js/auto';
@@ -8,12 +14,17 @@ import { Chart } from 'chart.js/auto';
 @Component({
   selector: 'admin-dashboard',
   standalone: true,
-  imports: [CommonModule, NgIf, NgFor],
+  imports: [
+    CommonModule,
+    NgIf,
+    NgFor,
+    NgClass,
+    DatePipe
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
 export class Dashboard {
-
   products = signal<Product[]>([]);
   orders = signal<any[]>([]);
   selectedOrder = signal<any | null>(null);
@@ -63,25 +74,19 @@ export class Dashboard {
     });
   }
 
-  // -----------------------------
-  // REALTIME USERS
-  // -----------------------------
   listenToUsers() {
-    onSnapshot(collection(db, 'users'), snap => {
+    onSnapshot(collection(db, 'users'), (snap: any) => {
       this.userMap.clear();
-      snap.forEach(doc => {
+      snap.forEach((doc: any) => {
         const data = doc.data() as any;
         this.userMap.set(doc.id, data.fullName || data.nickname || data.email);
       });
     });
   }
 
-  // -----------------------------
-  // REALTIME PRODUCTS
-  // -----------------------------
   listenToProducts() {
-    onSnapshot(collection(db, 'products'), snap => {
-      const products: Product[] = snap.docs.map(d => {
+    onSnapshot(collection(db, 'products'), (snap: any) => {
+      const products: Product[] = snap.docs.map((d: any) => {
         const data = d.data() as any;
         return {
           id: d.id,
@@ -94,65 +99,51 @@ export class Dashboard {
     });
   }
 
-  // -----------------------------
-  // REALTIME ORDERS
-  // -----------------------------
-listenToOrders() {
-  // FIGYELJÜK A USERS KOLLEKCIÓT
-  onSnapshot(collection(db, 'users'), usersSnap => {
-    // új users snapshot → nem töröljük a map-et, csak új usereknél adunk hozzá listenert
-    usersSnap.forEach(userDoc => {
-      const userId = userDoc.id;
+  listenToOrders() {
+    onSnapshot(collection(db, 'users'), (usersSnap: any) => {
+      usersSnap.forEach((userDoc: any) => {
+        const userId = userDoc.id;
 
-      if (this.userOrdersMap.has(userId)) {
-        // már van listener ehhez a userhez
-        return;
-      }
+        if (this.userOrdersMap.has(userId)) return;
 
-      const ordersRef = collection(db, `users/${userId}/orders`);
+        const ordersRef = collection(db, `users/${userId}/orders`);
 
-      onSnapshot(ordersRef, async ordersSnap => {
-        const userOrders: any[] = [];
+        onSnapshot(ordersRef, async (ordersSnap: any) => {
+          const userOrders: any[] = [];
 
-        for (const d of ordersSnap.docs) {
-          const data = d.data();
+          for (const d of ordersSnap.docs) {
+            const data = d.data();
 
-          const itemsSnap = await getDocs(
-            collection(db, `users/${userId}/orders/${d.id}/items`)
-          );
+            const itemsSnap = await getDocs(
+              collection(db, `users/${userId}/orders/${d.id}/items`)
+            );
 
-          const items = itemsSnap.docs.map(i => ({
-            id: i.id,
-            ...i.data()
-          }));
+            const items = itemsSnap.docs.map((i: any) => ({
+              id: i.id,
+              ...i.data()
+            }));
 
-          userOrders.push({
-            id: d.id,
-            userId,
-            customerName: this.userMap.get(userId) || userId,
-            ...data,
-            status: data['status'] ?? 'completed',
-            items
-          });
-        }
+            userOrders.push({
+              id: d.id,
+              userId,
+              customerName: this.userMap.get(userId) || userId,
+              ...data,
+              status: data['status'] ?? 'completed',
+              items
+            });
+          }
 
-        // user saját rendelései frissülnek
-        this.userOrdersMap.set(userId, userOrders);
+          this.userOrdersMap.set(userId, userOrders);
 
-        // MINDEN USER RENDELÉSÉNEK ÚJRAÖSSZEGYŰJTÉSE
-        const allOrders: any[] = [];
-        this.userOrdersMap.forEach(list => allOrders.push(...list));
+          const allOrders: any[] = [];
+          this.userOrdersMap.forEach(list => allOrders.push(...list));
 
-        this.orders.set(allOrders);
+          this.orders.set(allOrders);
+        });
       });
     });
-  });
-}
+  }
 
-
-  // -----------------------------
-  // HELPERS
-  // -----------------------------
   formatDate(value: any) {
     if (!value) return null;
     const date = value.toDate ? value.toDate() : new Date(value);
@@ -192,7 +183,7 @@ listenToOrders() {
     );
 
     this.orderItems.set(
-      itemsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+      itemsSnap.docs.map((d: any) => ({ id: d.id, ...d.data() }))
     );
   }
 
@@ -200,7 +191,7 @@ listenToOrders() {
     return [...this.orders()].sort((a, b) => {
       const da = (a.createdAt?.toDate?.() ?? new Date(a.createdAt)).getTime();
       const db = (b.createdAt?.toDate?.() ?? new Date(b.createdAt)).getTime();
-      return db - da; // 🔥 legfrissebb elöl
+      return db - da;
     });
   });
 
@@ -246,6 +237,4 @@ listenToOrders() {
       .sort((a, b) => b.qty - a.qty)
       .slice(0, 5);
   });
-
-  
 }

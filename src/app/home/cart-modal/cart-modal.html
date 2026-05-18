@@ -1,18 +1,26 @@
 <div *ngIf="show" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-  <div class="bg-black border border-white/10 rounded-xl p-8 w-full max-w-lg">
+  <div class="bg-black 
+              border border-pink border-opacity-40 
+              rounded-xl p-8 w-full max-w-lg 
+              max-h-[90vh] overflow-y-auto
+              shadow-[0_0_20px_rgba(255,0,128,0.45)]">
 
-    <h2 class="text-white text-2xl font-light mb-6">Your Cart</h2>
+    <h2 class="text-white text-2xl font-light mb-6 drop-shadow-[0_0_12px_rgba(255,0,128,0.4)]">
+      Your Cart
+    </h2>
 
     <div *ngIf="cartItems.length === 0" class="text-white/60">
       Your cart is empty.
     </div>
 
     <div *ngFor="let item of cartItems" 
-         class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+         class="flex justify-between items-center mb-4 border-b border-pink-500/30 pb-3">
 
       <div>
         <div class="text-white">{{ item.name }}</div>
-        <div class="text-[#ff0080] font-bold">${{ item.price }}</div>
+        <div class="text-[#ff0080] font-bold drop-shadow-[0_0_8px_rgba(255,0,128,0.4)]">
+          ${{ item.price }}
+        </div>
         <div class="text-white/60 text-sm">Quantity: {{ item.quantity }}</div>
       </div>
 
@@ -23,19 +31,23 @@
 
     <div class="text-white text-xl font-light mt-6">
       Total: 
-      <span class="text-[#ff0080] font-bold">
+      <span class="text-[#ff0080] font-bold drop-shadow-[0_0_8px_rgba(255,0,128,0.4)]">
         ${{ getFirestoreTotal() }}
       </span>
     </div>
 
     <button
-      class="mt-6 w-full py-2 rounded-lg bg-[#ff0080] text-black font-medium"
-      (click)="close()"> Close
+      class="mt-6 w-full py-2 rounded-lg bg-[#ff0080] text-black font-medium
+             shadow-[0_0_12px_rgba(255,0,128,0.5)] hover:brightness-110 transition"
+      (click)="close()"> 
+      Close
     </button>
 
     <button
-      class="mt-4 w-full py-2 rounded-lg bg-white text-black font-medium"
-      (click)="startCheckout()">Checkout
+      class="mt-4 w-full py-2 rounded-lg bg-white text-black font-medium
+             hover:brightness-110 transition"
+      (click)="startCheckout()">
+      Checkout
     </button>
   </div>
 </div>

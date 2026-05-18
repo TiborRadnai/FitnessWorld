@@ -1,16 +1,16 @@
 import { Component, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { AuthModal } from '../components/auth-modal/auth-modal';
 import { CartService } from '../../core/services/cart.service';
 import { CartModal } from '../../home/cart-modal/cart-modal';
 import { FirestoreService } from '../../core/services/firestore.service';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [NgIf, AuthModal, CartModal, CommonModule],
+  imports: [NgIf, AuthModal, CartModal, CommonModule, RouterModule],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css']
 })
@@ -24,6 +24,7 @@ export class Navbar {
 
   unsubscribeUser: any;
   unsubscribeCart: any;
+  isDaniel = false;
 
   @ViewChild(CartModal) cartModal!: CartModal;
 
@@ -33,7 +34,50 @@ export class Navbar {
     private auth: AuthService,
     private firestore: FirestoreService,
     private cart: CartService,
+    private router: Router          // ✅ Router injektálva
   ) {}
+
+  ngOnInit() {
+    this.unsubscribeUser = this.auth.user$.subscribe(async user => {
+      this.currentUser = user;
+      this.isDaniel = !!user && user.email === 'daniel.ruitz@fitnessworld.com';
+
+      if (!user) {
+        this.cartCount = 0;
+
+        if (this.unsubscribeCart) {
+          this.unsubscribeCart();   // ✅ Firestore unsubscribe callback
+          this.unsubscribeCart = null;
+        }
+
+        return;
+      }
+
+      this.unsubscribeCart = this.firestore.getUserCart(user.uid, (items) => {
+        this.cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
+      });
+
+      if (!this.successHandled) {
+        this.successHandled = true;
+        await this.handleStripeSuccess(user.uid);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.unsubscribeUser) {
+      this.unsubscribeUser.unsubscribe();   // Subscription
+    }
+
+    if (this.unsubscribeCart) {
+      this.unsubscribeCart();               // Firestore unsubscribe callback
+    }
+  }
+
+  // 🔥 IDE JÖN AZ ADMIN NAVIGÁCIÓ
+  goAdmin() {
+    this.router.navigate(['/admin']);
+  }
 
   scrollTo(sectionId: string) {
     const el = document.getElementById(sectionId);
@@ -50,52 +94,16 @@ export class Navbar {
   }
 
   openServiceModal(title: string) {
-    // görgessünk le a Services komponenshez
     this.scrollTo('services');
 
-    // kis késleltetés, hogy a scroll befejeződjön
     setTimeout(() => {
       const event = new CustomEvent('openServiceModal', { detail: title });
       window.dispatchEvent(event);
     }, 400);
 
-    // mobil menü bezárása
     if (this.isMenuOpen) {
       this.toggleMenu();
     }
-  }
-
-  ngOnInit() {
-    this.unsubscribeUser = this.auth.user$.subscribe(async user => {
-
-      this.currentUser = user;   // <-- EZ HIÁNYZOTT
-
-      if (!user) {
-        this.cartCount = 0;
-
-        if (this.unsubscribeCart) {
-          this.unsubscribeCart();
-          this.unsubscribeCart = null;
-        }
-
-        return;
-      }
-
-      this.unsubscribeCart = this.firestore.getUserCart(user.uid, (items) => {
-        this.cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
-      });
-
-      if (!this.successHandled) {
-        this.successHandled = true;
-        await this.handleStripeSuccess(user.uid);
-      }
-    });
-
-  }
-
-  ngOnDestroy() {
-    if (this.unsubscribeUser) this.unsubscribeUser();
-    if (this.unsubscribeCart) this.unsubscribeCart();
   }
 
   openCart() {
@@ -119,16 +127,12 @@ export class Navbar {
     document.body.style.overflow = this.isMenuOpen ? 'hidden' : 'auto';
   }
 
-  // 🔥 SUCCESS LOGIKA
   private async handleStripeSuccess(userId: string) {
     const params = new URLSearchParams(window.location.search);
-
     if (!params.has('success')) return;
 
     try {
-
       const cartItems = await this.firestore.getUserCartOnce(userId);
-
       if (!cartItems.length) {
         this.cleanUrl();
         return;
@@ -136,21 +140,15 @@ export class Navbar {
 
       const orderId = await this.firestore.createOrder(userId, {
         total: cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
-        items: cartItems   // <-- EZ KELL
+        items: cartItems
       });
 
-      // 🔥 ORDER ITEMS + STOCK UPDATE
       for (const item of cartItems) {
         await this.firestore.addOrderItem(userId, orderId, item);
-
-        // 🔥 KÉSZLET CSÖKKENTÉSE
         await this.firestore.decreaseStock(item.id, item.quantity);
       }
 
-      // 🔥 KOSÁR TÖRLÉSE
       await this.firestore.clearUserCart(userId);
-
-      // 🔥 TOAST
       this.showSuccessToast();
 
     } catch (err) {
@@ -159,7 +157,6 @@ export class Navbar {
       this.cleanUrl();
     }
   }
-
 
   private showSuccessToast() {
     const toast = document.createElement('div');
