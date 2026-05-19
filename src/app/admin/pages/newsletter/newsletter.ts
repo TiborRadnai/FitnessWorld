@@ -71,15 +71,27 @@ tinymce.init({
   }
 
   sendNewsletter() {
-  if (!this.content.trim()) {
-    alert('A hírlevél tartalma üres — előbb írj valamit!');
-    return;
+    if (!this.content.trim()) {
+      alert('A hírlevél tartalma üres — előbb írj valamit!');
+      return;
+    }
+
+    fetch('https://madevix.com/api/send-newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        html: this.content,
+        subject: 'Madevix Newsletter',
+        recipients: 'everyone'
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert('✅ Hírlevél elküldve!');
+    })
+    .catch(err => {
+      console.error(err);
+      alert('❌ Hiba történt a küldés során.');
+    });
   }
-
-  // Itt jöhetne az API‑hívás vagy a Firestore mentés
-  console.log('Hírlevél elküldve:', this.content);
-
-  alert('✅ Hírlevél sikeresen elküldve!');
-}
-
 }

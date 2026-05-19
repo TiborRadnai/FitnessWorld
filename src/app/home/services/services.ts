@@ -119,10 +119,20 @@ export class Services implements AfterViewInit {
   onPointerMove(event: PointerEvent) {
     if (!this.isDown) return;
 
+    const dx = Math.abs(event.clientX - this.startX);
+    const dy = Math.abs(event.clientY - this.startY);
+
+    // Ha a user lefelé scrollozik → engedjük el
+    if (dy > dx) {
+      this.isDown = false;
+      return;
+    }
+
+    const container = this.scrollContainer.nativeElement;
+
     const x = event.clientX;
     const walk = (x - this.startX) * -1;
 
-    const container = this.scrollContainer.nativeElement;
     container.scrollLeft = this.scrollLeft + walk;
 
     this.normalizeScrollPosition();
