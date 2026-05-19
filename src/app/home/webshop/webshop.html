@@ -22,17 +22,21 @@
                w-full">
 
         <!-- PRODUCT CARD -->
-        <div
-          *ngFor="let product of products"
-          class="flex flex-col text-center transition-transform duration-300 hover:scale-[1.02] cursor-pointer relative
-                 h-auto min-h-[260px] sm:min-h-[300px] md:min-h-[340px]">
+            <div
+              *ngFor="let product of products"
+              class="flex flex-col text-center transition-transform duration-300 hover:scale-[1.02] cursor-pointer relative
+                    h-auto min-h-[260px] sm:min-h-[300px] md:min-h-[340px]"
+              (mouseenter)="onMouseEnter(product.id)"
+              (mouseleave)="onMouseLeave()"
+            >
 
-          <img
-            [src]="getImageUrl(product.imageUrl)"
-            alt="{{ product.name }}"
-            class="w-[clamp(70px,12vw,140px)] h-[clamp(70px,12vw,140px)]
-                   object-contain mx-auto mb-4 drop-shadow-[0_0_12px_rgba(255,0,128,0.3)]"
-          />
+            <img
+              [src]="getImageUrl(product.imageUrl)"
+              alt="{{ product.name }}"
+              class="w-[clamp(70px,12vw,140px)] h-[clamp(70px,12vw,140px)]
+                    object-contain mx-auto mb-4 drop-shadow-[0_0_12px_rgba(255,0,128,0.3)]"
+              (click)="toggleDescription(product.id)"
+            />
 
           <h3 class="text-white text-sm sm:text-base md:text-lg mb-1">
             {{ product.name }}
@@ -47,7 +51,7 @@
           <div
             *ngIf="expandedProductId === product.id"
             class="absolute inset-0 bg-black/80 text-white/80 text-sm p-4 flex items-center justify-center
-                   opacity-0 animate-fadeIn rounded-lg z-10">
+                  opacity-0 animate-fadeIn rounded-lg z-10">
             {{ product.description }}
           </div>
 

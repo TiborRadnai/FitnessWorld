@@ -13,7 +13,7 @@
   #scrollContainer
   scroll-container
   class="relative z-40 flex h-full overflow-x-auto select-none cursor-grab active:cursor-grabbing"
-  style="scrollbar-width: none; -ms-overflow-style: none;"  
+  style="touch-action: pan-y pan-x;"
   (pointerdown)="onPointerDown($event)"
   (pointermove)="onPointerMove($event)"
   (pointerleave)="onPointerLeave()"
@@ -132,56 +132,49 @@
   ></div>
 
   <!-- MODAL CONTENT -->
-<div class="relative z-10 w-[95%] max-w-5xl bg-black/60 backdrop-blur-lg overflow-hidden shadow-2xl animate-modalIn">
+  <div class="relative z-10 w-[95%] max-w-5xl bg-black/60 backdrop-blur-lg overflow-hidden shadow-2xl animate-modalIn">
 
-    <!-- HERO IMAGE -->
-<div class="relative w-full max-h-[70vh] flex items-center justify-center bg-black">
-<img 
-  [src]="selectedItem.image"
-  class="max-h-[60vh] md:max-h-[70vh] w-auto object-contain"
-  draggable="false"
-/>
+        <!-- HERO IMAGE -->
+    <div class="relative w-full max-h-[70vh] flex items-center justify-center bg-black">
+    <img 
+      [src]="selectedItem.image"
+      class="max-h-[60vh] md:max-h-[70vh] w-auto object-contain"
+      draggable="false"
+    />
 
-  <!-- Felső gradient a szöveghez -->
-  <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none"></div>
+      <!-- Felső gradient a szöveghez -->
+      <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none"></div>
 
-  <!-- Cím -->
-  <h2 class="absolute bottom-6 left-6 text-4xl md:text-5xl font-semibold">
-    {{ selectedItem.title }}
-  </h2>
-</div>
-
-
-    <!-- LEÍRÁS -->
-    <div class="p-6 text-lg leading-relaxed">
-      {{ selectedItem.description }}
+      <!-- Cím -->
+      <h2 class="absolute bottom-6 left-6 text-4xl md:text-5xl font-semibold">
+        {{ selectedItem.title }}
+      </h2>
     </div>
 
+    <!-- LEÍRÁS -->
+      <div class="p-6 text-lg leading-relaxed">
+        {{ selectedItem.description }}
+      </div>
+
     <!-- CLOSE BUTTON -->
-<button 
-  class="
-    absolute top-1 right-2
-    w-8 h-8
-    flex items-center justify-center
-    text-pink
-    text-4xl
-    leading-none
-    font-light
-    transition-all duration-200
-    hover:drop-shadow-[0_0_12px_rgba(255,0,128,0.9)]
-    active:scale-90
-    z-50
-  "
-  (click)="closeModal()"
->
-  ×
-</button>
-
-
-
-
+    <button 
+      class="
+        absolute top-1 right-2
+        w-8 h-8
+        flex items-center justify-center
+        text-pink
+        text-4xl
+        leading-none
+        font-light
+        transition-all duration-200
+        hover:drop-shadow-[0_0_12px_rgba(255,0,128,0.9)]
+        active:scale-90
+        z-50
+      "
+      (click)="closeModal()"
+    >
+      ×
+    </button>
   </div>
 </div>
-
-
 </section>

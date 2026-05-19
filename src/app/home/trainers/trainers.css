@@ -22,3 +22,13 @@
   bottom: 0;
   transform: rotate(180deg);
 }
+
+:root {
+  --vh: 100%;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --vh: 100dvh;
+  }
+}

@@ -65,12 +65,12 @@
         </span>
 
         <!-- ADMIN BUTTON — csak Daniel látja -->
-      <a *ngIf="isDaniel"
-        href="#"
-        (click)="goAdmin(); $event.preventDefault()"
-        class="px-3 py-1 rounded-full bg-pink text-white font-medium text-sm hover:bg-pink/80 transition">
-        Admin
-      </a>
+        <a *ngIf="isDaniel"
+          href="#"
+          (click)="goAdmin(); $event.preventDefault()"
+          class="px-3 py-1 rounded-full bg-pink text-white font-medium text-sm hover:bg-pink/80 transition">
+          Admin
+        </a>
       
         <button (click)="logout()" class="hover:text-pink transition">Logout</button>
       </div>
@@ -90,16 +90,16 @@
           {{ cartCount }}
         </span>
       </button>
-      <app-cart-modal></app-cart-modal>
 
     </div>
 
     <!-- MOBILE USER + CART -->
-    <div class="flex md:hidden items-center gap-4 ml-auto mr-4">
+    <div class="flex md:hidden items-center gap-4 ml-auto mr-4 z-[60]">
 
-      <!-- User icon (indicator only) -->
+      <!-- User icon (logged in) -->
       <button *ngIf="currentUser"
-              class="text-arcticWhite opacity-80">
+              class="text-arcticWhite opacity-80"
+              (click)="toggleMenu()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
              viewBox="0 0 24 24" stroke-width="1.5"
              stroke="currentColor" class="w-6 h-6">
@@ -108,7 +108,7 @@
         </svg>
       </button>
 
-      <!-- User icon (open login modal) -->
+      <!-- User icon (not logged in) -->
       <button *ngIf="!currentUser"
               class="text-arcticWhite hover:text-pink transition"
               (click)="openAuthModal()">
@@ -121,7 +121,9 @@
       </button>
 
       <!-- Cart -->
-      <button class="text-arcticWhite hover:text-pink transition relative">
+      <button class="text-arcticWhite hover:text-pink transition relative"
+              (click)="openCart(); $event.stopPropagation()">
+
         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
              viewBox="0 0 24 24" stroke-width="1.5"
              stroke="currentColor" class="w-6 h-6">
@@ -137,7 +139,7 @@
     </div>
 
     <!-- HAMBURGER -->
-    <button class="md:hidden w-8 h-8 flex flex-col justify-center items-center gap-1.5"
+    <button class="md:hidden w-8 h-8 flex flex-col justify-center items-center gap-1.5 z-[60]"
             (click)="toggleMenu()">
       <span class="block w-6 h-0.5 bg-white transition-all duration-300"></span>
       <span class="block w-6 h-0.5 bg-white transition-all duration-300"></span>
@@ -179,16 +181,34 @@
     </button>
   </div>
 
-  <!-- Menu points -->
-  <a href="#" class="block text-xl mb-4">Home</a>
-  <a href="#" class="block text-xl mb-4">Services</a>
-  <a href="#" class="block text-xl mb-4">Booking</a>
-  <a href="#" class="block text-xl mb-4">Contact</a>
+  <!-- MOBILE MENU POINTS (DESKTOP TÜKRÖZÉSE) -->
+  <button class="block text-xl mb-4 text-left w-full"
+          (click)="scrollTo('home'); toggleMenu()">
+    Home
+  </button>
+
+  <button class="block text-xl mb-4 text-left w-full"
+          (click)="scrollTo('services'); toggleMenu()">
+    Services
+  </button>
+
+  <button class="block text-xl mb-4 text-left w-full"
+          (click)="scrollTo('booking'); toggleMenu()">
+    Booking
+  </button>
+
+  <button class="block text-xl mb-4 text-left w-full"
+          (click)="scrollTo('webshop'); toggleMenu()">
+    Webshop
+  </button>
 
 </div>
 
+<!-- CART MODAL — GLOBÁLIS, MINDEN VIEWPORTON -->
+<app-cart-modal></app-cart-modal>
+
+<!-- AUTH MODAL -->
 <app-auth-modal 
   *ngIf="isAuthModalOpen"
   (close)="closeAuthModal()">
 </app-auth-modal>
-

@@ -30,10 +30,26 @@ export class Webshop implements OnInit {
     return `https://firebasestorage.googleapis.com/v0/b/fitnessworld-56f74.firebasestorage.app/o/products%2F${fileName}?alt=media`;
   }
 
-  expandedProductId?: string | null;
+  expandedProductId: string | null = null;
 
-  toggleDescription(productId: string) {
-    this.expandedProductId = this.expandedProductId === productId ? null : productId;
+  toggleDescription(id: string) {
+    // Mobilon toggle
+    if (window.innerWidth < 768) {
+      this.expandedProductId = this.expandedProductId === id ? null : id;
+    }
+  }
+
+  onMouseEnter(id: string) {
+    // Desktop hover
+    if (window.innerWidth >= 768) {
+      this.expandedProductId = id;
+    }
+  }
+
+  onMouseLeave() {
+    if (window.innerWidth >= 768) {
+      this.expandedProductId = null;
+    }
   }
 
   async addToCart(product: Product) {

@@ -5,7 +5,7 @@ import { AuthModal } from '../components/auth-modal/auth-modal';
 import { CartService } from '../../core/services/cart.service';
 import { CartModal } from '../../home/cart-modal/cart-modal';
 import { FirestoreService } from '../../core/services/firestore.service';
-import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -26,7 +26,7 @@ export class Navbar {
   unsubscribeCart: any;
   isDaniel = false;
 
-  @ViewChild(CartModal) cartModal!: CartModal;
+  @ViewChild(CartModal, { static: false }) cartModal!: CartModal;
 
   private successHandled = false;
 
@@ -34,7 +34,7 @@ export class Navbar {
     private auth: AuthService,
     private firestore: FirestoreService,
     private cart: CartService,
-    private router: Router          // ✅ Router injektálva
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -46,7 +46,7 @@ export class Navbar {
         this.cartCount = 0;
 
         if (this.unsubscribeCart) {
-          this.unsubscribeCart();   // ✅ Firestore unsubscribe callback
+          this.unsubscribeCart();
           this.unsubscribeCart = null;
         }
 
@@ -66,15 +66,14 @@ export class Navbar {
 
   ngOnDestroy() {
     if (this.unsubscribeUser) {
-      this.unsubscribeUser.unsubscribe();   // Subscription
+      this.unsubscribeUser.unsubscribe();
     }
 
     if (this.unsubscribeCart) {
-      this.unsubscribeCart();               // Firestore unsubscribe callback
+      this.unsubscribeCart();
     }
   }
 
-  // 🔥 IDE JÖN AZ ADMIN NAVIGÁCIÓ
   goAdmin() {
     this.router.navigate(['/admin']);
   }
@@ -93,24 +92,32 @@ export class Navbar {
     }
   }
 
-  openServiceModal(title: string) {
-    this.scrollTo('services');
+  openCart() {
+    if (this.isMenuOpen) {
+      this.toggleMenu();
+    }
+    this.cartModal.open();
+  }
 
-    setTimeout(() => {
-      const event = new CustomEvent('openServiceModal', { detail: title });
-      window.dispatchEvent(event);
-    }, 400);
+  openServiceModal(title: string) {
+    if (window.innerWidth >= 768) {
+      this.scrollTo('services');
+
+      setTimeout(() => {
+        const event = new CustomEvent('openServiceModal', { detail: title });
+        window.dispatchEvent(event);
+      }, 400);
+    }
 
     if (this.isMenuOpen) {
       this.toggleMenu();
     }
   }
 
-  openCart() {
-    this.cartModal.open();
-  }
-
   openAuthModal() {
+    if (this.isMenuOpen) {
+      this.toggleMenu();
+    }
     this.isAuthModalOpen = true;
   }
 
@@ -119,6 +126,9 @@ export class Navbar {
   }
 
   logout() {
+    if (this.isMenuOpen) {
+      this.toggleMenu();
+    }
     this.auth.logout();
   }
 
